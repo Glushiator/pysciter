@@ -38,11 +38,7 @@ config = {
         'Environment :: Web Environment',
         'Programming Language :: C++',
         'Programming Language :: Python',
-        'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.4',
-        'Programming Language :: Python :: 3.5',
-        'Programming Language :: Python :: 3.6',
-        'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 2.7',
         'Topic :: Desktop Environment',
         'Topic :: Software Development',
         'Topic :: Software Development :: Libraries :: Application Frameworks',
@@ -75,7 +71,7 @@ For installation instructions and usage examples please refer to `github project
 Compatibility
 =============
 
-PySciter requires Python 3.x.
+PySciter requires Python 2.7.
 
 Sciter works on:
 

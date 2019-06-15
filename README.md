@@ -1,4 +1,4 @@
-# Python bindings for Sciter
+# Unofficial Python 2.7 bindings for Sciter
 
 [![Build status](https://ci.appveyor.com/api/projects/status/rphv883klffw9em9/branch/master?svg=true)](https://ci.appveyor.com/project/pravic/pysciter)
 [![Build Status](https://img.shields.io/travis/sciter-sdk/pysciter/master.svg)](https://travis-ci.org/sciter-sdk/pysciter)
@@ -143,7 +143,7 @@ _Check [pysciter/examples](https://github.com/sciter-sdk/pysciter/tree/master/ex
 * [x] Linux
 * [x] Raspberry Pi
 
-Python 3.x.
+Python 2.7.
 
 
 ## License

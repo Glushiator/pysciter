@@ -11,13 +11,7 @@ notifications:
 matrix:
   include:
     - os: linux
-      python: "3.4"
-    - os: linux
-      python: "3.5"
-    - os: linux
-      python: "3.6"
-    - os: linux
-      python: "3.7-dev"
+      python: "2.7"
 
     - os: osx
       language: generic
@@ -60,7 +54,7 @@ before_script:
 
 
 script:
-  - python3 setup.py develop
-  - python3 tests/test_value.py
+  - python2.7 setup.py develop
+  - python2.7 tests/test_value.py
 
 after_script: set +e
