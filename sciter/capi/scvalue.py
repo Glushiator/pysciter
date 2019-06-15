@@ -1,5 +1,6 @@
-"""Sciter value, native C interface."""
+u"""Sciter value, native C interface."""
 
+from __future__ import absolute_import
 import ctypes
 import enum
 
@@ -7,18 +8,18 @@ FLOAT_VALUE = ctypes.c_double
 
 
 class SCITER_VALUE(ctypes.Structure):
-    """Sciter value descriptor."""
+    u"""Sciter value descriptor."""
     _fields_ = [
-        ("t", ctypes.c_uint32),
-        ("u", ctypes.c_uint32),
-        ("d", ctypes.c_uint64),
+        (u"t", ctypes.c_uint32),
+        (u"u", ctypes.c_uint32),
+        (u"d", ctypes.c_uint64),
         ]
 
 PSCITER_VALUE = ctypes.POINTER(SCITER_VALUE)
 
 
 class VALUE_RESULT(enum.IntEnum):
-    """Value functions result codes."""
+    u"""Value functions result codes."""
     HV_OK_TRUE = -1
     HV_OK = 0
     HV_BAD_PARAMETER = 1
@@ -26,7 +27,7 @@ class VALUE_RESULT(enum.IntEnum):
 
 
 class VALUE_TYPE(enum.IntEnum):
-    """Sciter value types."""
+    u"""Sciter value types."""
     T_UNDEFINED = 0
     T_NULL = 1
     T_BOOL = 2
@@ -50,7 +51,7 @@ class VALUE_TYPE(enum.IntEnum):
 
 
 class VALUE_UNIT_TYPE(enum.IntEnum):
-    """Sciter length value subtype."""
+    u"""Sciter length value subtype."""
     UT_NONE = 0
     UT_EM = 1               # height of the element's font.
     UT_EX = 2               # height of letter 'x'
@@ -71,7 +72,7 @@ class VALUE_UNIT_TYPE(enum.IntEnum):
 
 
 class VALUE_UNIT_TYPE_DATE(enum.IntEnum):
-    """Sciter date subtype."""
+    u"""Sciter date subtype."""
     DT_HAS_DATE         = 0x01  # date contains date portion
     DT_HAS_TIME         = 0x02  # date contains time portion HH:MM
     DT_HAS_SECONDS      = 0x04  # date contains time and seconds HH:MM:SS
@@ -79,7 +80,7 @@ class VALUE_UNIT_TYPE_DATE(enum.IntEnum):
 
 
 class VALUE_UNIT_TYPE_OBJECT(enum.IntEnum):
-    """Sciter object subtype."""
+    u"""Sciter object subtype."""
     UT_OBJECT_ARRAY  = 0  # type T_OBJECT of type Array
     UT_OBJECT_OBJECT = 1  # type T_OBJECT of type Object
     UT_OBJECT_CLASS  = 2  # type T_OBJECT of type Class (class or namespace)
@@ -89,7 +90,7 @@ class VALUE_UNIT_TYPE_OBJECT(enum.IntEnum):
 
 
 class VALUE_UNIT_TYPE_STRING(enum.IntEnum):
-    """Sciter string subtype."""
+    u"""Sciter string subtype."""
     UT_STRING_STRING = 0       # string
     UT_STRING_ERROR = 1        # is an error string
     UT_STRING_SECURE = 2       # secure string ("wiped" on destroy)
@@ -98,7 +99,7 @@ class VALUE_UNIT_TYPE_STRING(enum.IntEnum):
 
 
 class VALUE_STRING_CVT_TYPE(enum.IntEnum):
-    """Value to string conversion method."""
+    u"""Value to string conversion method."""
     CVT_SIMPLE = 0         # simple conversion of terminal values
     CVT_JSON_LITERAL = 1   # json literal parsing/emission
     CVT_JSON_MAP = 2       # json parsing/emission, it parses as if token '{' already recognized

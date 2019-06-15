@@ -1,8 +1,9 @@
-"""Sciter's get resource request object - represents requests made by Element/View.request() functions.
+u"""Sciter's get resource request object - represents requests made by Element/View.request() functions.
 
 Incomplete.
 """
 
+from __future__ import absolute_import
 import enum
 from ctypes import Structure, POINTER, c_void_p
 
@@ -12,7 +13,7 @@ HREQUEST = c_void_p
 
 
 class REQUEST_RESULT(enum.IntEnum):
-    """."""
+    u"""."""
     REQUEST_PANIC = -1        # e.g. not enough memory
     REQUEST_OK = 0
     REQUEST_BAD_PARAM = 1     # bad parameter
@@ -21,7 +22,7 @@ class REQUEST_RESULT(enum.IntEnum):
 
 
 class REQUEST_RQ_TYPE(enum.IntEnum):
-    """."""
+    u"""."""
     RRT_GET = 1
     RRT_POST = 2
     RRT_PUT = 3
@@ -29,14 +30,14 @@ class REQUEST_RQ_TYPE(enum.IntEnum):
 
 
 class REQUEST_STATE(enum.IntEnum):
-    """."""
+    u"""."""
     RS_PENDING = 0
     RS_SUCCESS = 1
     RS_FAILURE = 2
 
 
 class SciterResourceType(enum.IntEnum):
-    """."""
+    u"""."""
     RT_DATA_HTML = 0
     RT_DATA_IMAGE = 1
     RT_DATA_STYLE = 2
@@ -52,10 +53,10 @@ RequestUnUse = SCFN(REQUEST_RESULT, HREQUEST)
 
 
 class SciterRequestAPI(Structure):
-    """Sciter Request ABI."""
+    u"""Sciter Request ABI."""
     _fields_ = [
-        ("RequestUse", RequestUse),
-        ("RequestUnUse", RequestUnUse),
+        (u"RequestUse", RequestUse),
+        (u"RequestUnUse", RequestUnUse),
         # TODO: rest of Request API
     ]
 

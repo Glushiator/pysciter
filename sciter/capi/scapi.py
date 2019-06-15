@@ -1,4 +1,5 @@
-"""Sciter C API interface."""
+u"""Sciter C API interface."""
+from __future__ import absolute_import
 from ctypes import *
 
 from sciter.capi.sctypes import *
@@ -10,6 +11,7 @@ from sciter.capi.sctiscript import HVM, tiscript_native_interface
 from sciter.capi.scgraphics import LPSciterGraphicsAPI
 from sciter.capi.screquest import LPSciterRequestAPI
 from sciter.capi.scmsg import SCITER_X_MSG
+from itertools import imap
 
 
 #
@@ -229,220 +231,220 @@ if SCITER_WIN:
 
 
 class ISciterAPI(Structure):
-    """Sciter API functions."""
+    u"""Sciter API functions."""
     sciter_api = [
-        "SciterClassName",
-        "SciterVersion",
-        "SciterDataReady",
-        "SciterDataReadyAsync",
+        u"SciterClassName",
+        u"SciterVersion",
+        u"SciterDataReady",
+        u"SciterDataReadyAsync",
         # ifdef WINDOWS
-        "SciterProc",
-        "SciterProcND",
+        u"SciterProc",
+        u"SciterProcND",
         # endif
-        "SciterLoadFile",
+        u"SciterLoadFile",
 
-        "SciterLoadHtml",
-        "SciterSetCallback",
-        "SciterSetMasterCSS",
-        "SciterAppendMasterCSS",
-        "SciterSetCSS",
-        "SciterSetMediaType",
-        "SciterSetMediaVars",
-        "SciterGetMinWidth",
-        "SciterGetMinHeight",
-        "SciterCall",
-        "SciterEval",
-        "SciterUpdateWindow",
+        u"SciterLoadHtml",
+        u"SciterSetCallback",
+        u"SciterSetMasterCSS",
+        u"SciterAppendMasterCSS",
+        u"SciterSetCSS",
+        u"SciterSetMediaType",
+        u"SciterSetMediaVars",
+        u"SciterGetMinWidth",
+        u"SciterGetMinHeight",
+        u"SciterCall",
+        u"SciterEval",
+        u"SciterUpdateWindow",
         # ifdef WINDOWS
-        "SciterTranslateMessage",
+        u"SciterTranslateMessage",
         # endif
-        "SciterSetOption",
-        "SciterGetPPI",
-        "SciterGetViewExpando",
+        u"SciterSetOption",
+        u"SciterGetPPI",
+        u"SciterGetViewExpando",
         # ifdef WINDOWS
-        "SciterRenderD2D",
-        "SciterD2DFactory",
-        "SciterDWFactory",
+        u"SciterRenderD2D",
+        u"SciterD2DFactory",
+        u"SciterDWFactory",
         # endif
-        "SciterGraphicsCaps",
-        "SciterSetHomeURL",
+        u"SciterGraphicsCaps",
+        u"SciterSetHomeURL",
         # if defined(OSX)
-        "SciterCreateNSView",
+        u"SciterCreateNSView",
         # endif
         # if defined(LINUX)
-        "SciterCreateWidget",           # since 3.2.0.1
+        u"SciterCreateWidget",           # since 3.2.0.1
         # endif
 
-        "SciterCreateWindow",
-        "SciterSetupDebugOutput",
+        u"SciterCreateWindow",
+        u"SciterSetupDebugOutput",
         # |
         # | DOM Element API
         # |
-        "Sciter_UseElement",
-        "Sciter_UnuseElement",
-        "SciterGetRootElement",
-        "SciterGetFocusElement",
-        "SciterFindElement",
-        "SciterGetChildrenCount",
-        "SciterGetNthChild",
-        "SciterGetParentElement",
-        "SciterGetElementHtmlCB",
-        "SciterGetElementTextCB",
-        "SciterSetElementText",
-        "SciterGetAttributeCount",
-        "SciterGetNthAttributeNameCB",
-        "SciterGetNthAttributeValueCB",
-        "SciterGetAttributeByNameCB",
-        "SciterSetAttributeByName",
-        "SciterClearAttributes",
-        "SciterGetElementIndex",
-        "SciterGetElementType",
-        "SciterGetElementTypeCB",
-        "SciterGetStyleAttributeCB",
-        "SciterSetStyleAttribute",
-        "SciterGetElementLocation",
-        "SciterScrollToView",
-        "SciterUpdateElement",
-        "SciterRefreshElementArea",
-        "SciterSetCapture",
-        "SciterReleaseCapture",
-        "SciterGetElementHwnd",
-        "SciterCombineURL",
-        "SciterSelectElements",
-        "SciterSelectElementsW",
-        "SciterSelectParent",
-        "SciterSelectParentW",
-        "SciterSetElementHtml",
-        "SciterGetElementUID",
-        "SciterGetElementByUID",
-        "SciterShowPopup",
-        "SciterShowPopupAt",
-        "SciterHidePopup",
-        "SciterGetElementState",
-        "SciterSetElementState",
-        "SciterCreateElement",
-        "SciterCloneElement",
-        "SciterInsertElement",
-        "SciterDetachElement",
-        "SciterDeleteElement",
-        "SciterSetTimer",
-        "SciterDetachEventHandler",
-        "SciterAttachEventHandler",
-        "SciterWindowAttachEventHandler",
-        "SciterWindowDetachEventHandler",
-        "SciterSendEvent",
-        "SciterPostEvent",
-        "SciterCallBehaviorMethod",
-        "SciterRequestElementData",
-        "SciterHttpRequest",
-        "SciterGetScrollInfo",
-        "SciterSetScrollPos",
-        "SciterGetElementIntrinsicWidths",
-        "SciterGetElementIntrinsicHeight",
-        "SciterIsElementVisible",
-        "SciterIsElementEnabled",
-        "SciterSortElements",
-        "SciterSwapElements",
-        "SciterTraverseUIEvent",
-        "SciterCallScriptingMethod",
-        "SciterCallScriptingFunction",
-        "SciterEvalElementScript",
-        "SciterAttachHwndToElement",
-        "SciterControlGetType",
-        "SciterGetValue",
-        "SciterSetValue",
-        "SciterGetExpando",
-        "SciterGetObject",
-        "SciterGetElementNamespace",
-        "SciterGetHighlightedElement",
-        "SciterSetHighlightedElement",
+        u"Sciter_UseElement",
+        u"Sciter_UnuseElement",
+        u"SciterGetRootElement",
+        u"SciterGetFocusElement",
+        u"SciterFindElement",
+        u"SciterGetChildrenCount",
+        u"SciterGetNthChild",
+        u"SciterGetParentElement",
+        u"SciterGetElementHtmlCB",
+        u"SciterGetElementTextCB",
+        u"SciterSetElementText",
+        u"SciterGetAttributeCount",
+        u"SciterGetNthAttributeNameCB",
+        u"SciterGetNthAttributeValueCB",
+        u"SciterGetAttributeByNameCB",
+        u"SciterSetAttributeByName",
+        u"SciterClearAttributes",
+        u"SciterGetElementIndex",
+        u"SciterGetElementType",
+        u"SciterGetElementTypeCB",
+        u"SciterGetStyleAttributeCB",
+        u"SciterSetStyleAttribute",
+        u"SciterGetElementLocation",
+        u"SciterScrollToView",
+        u"SciterUpdateElement",
+        u"SciterRefreshElementArea",
+        u"SciterSetCapture",
+        u"SciterReleaseCapture",
+        u"SciterGetElementHwnd",
+        u"SciterCombineURL",
+        u"SciterSelectElements",
+        u"SciterSelectElementsW",
+        u"SciterSelectParent",
+        u"SciterSelectParentW",
+        u"SciterSetElementHtml",
+        u"SciterGetElementUID",
+        u"SciterGetElementByUID",
+        u"SciterShowPopup",
+        u"SciterShowPopupAt",
+        u"SciterHidePopup",
+        u"SciterGetElementState",
+        u"SciterSetElementState",
+        u"SciterCreateElement",
+        u"SciterCloneElement",
+        u"SciterInsertElement",
+        u"SciterDetachElement",
+        u"SciterDeleteElement",
+        u"SciterSetTimer",
+        u"SciterDetachEventHandler",
+        u"SciterAttachEventHandler",
+        u"SciterWindowAttachEventHandler",
+        u"SciterWindowDetachEventHandler",
+        u"SciterSendEvent",
+        u"SciterPostEvent",
+        u"SciterCallBehaviorMethod",
+        u"SciterRequestElementData",
+        u"SciterHttpRequest",
+        u"SciterGetScrollInfo",
+        u"SciterSetScrollPos",
+        u"SciterGetElementIntrinsicWidths",
+        u"SciterGetElementIntrinsicHeight",
+        u"SciterIsElementVisible",
+        u"SciterIsElementEnabled",
+        u"SciterSortElements",
+        u"SciterSwapElements",
+        u"SciterTraverseUIEvent",
+        u"SciterCallScriptingMethod",
+        u"SciterCallScriptingFunction",
+        u"SciterEvalElementScript",
+        u"SciterAttachHwndToElement",
+        u"SciterControlGetType",
+        u"SciterGetValue",
+        u"SciterSetValue",
+        u"SciterGetExpando",
+        u"SciterGetObject",
+        u"SciterGetElementNamespace",
+        u"SciterGetHighlightedElement",
+        u"SciterSetHighlightedElement",
         # |
         # | DOM Node API
         # |
-        "SciterNodeAddRef",
-        "SciterNodeRelease",
-        "SciterNodeCastFromElement",
-        "SciterNodeCastToElement",
-        "SciterNodeFirstChild",
-        "SciterNodeLastChild",
-        "SciterNodeNextSibling",
-        "SciterNodePrevSibling",
-        "SciterNodeParent",
-        "SciterNodeNthChild",
-        "SciterNodeChildrenCount",
-        "SciterNodeType",
-        "SciterNodeGetText",
-        "SciterNodeSetText",
-        "SciterNodeInsert",
-        "SciterNodeRemove",
-        "SciterCreateTextNode",
-        "SciterCreateCommentNode",
+        u"SciterNodeAddRef",
+        u"SciterNodeRelease",
+        u"SciterNodeCastFromElement",
+        u"SciterNodeCastToElement",
+        u"SciterNodeFirstChild",
+        u"SciterNodeLastChild",
+        u"SciterNodeNextSibling",
+        u"SciterNodePrevSibling",
+        u"SciterNodeParent",
+        u"SciterNodeNthChild",
+        u"SciterNodeChildrenCount",
+        u"SciterNodeType",
+        u"SciterNodeGetText",
+        u"SciterNodeSetText",
+        u"SciterNodeInsert",
+        u"SciterNodeRemove",
+        u"SciterCreateTextNode",
+        u"SciterCreateCommentNode",
         # |
         # | Value API
         # |
-        "ValueInit",
-        "ValueClear",
-        "ValueCompare",
-        "ValueCopy",
-        "ValueIsolate",
-        "ValueType",
-        "ValueStringData",
-        "ValueStringDataSet",
-        "ValueIntData",
-        "ValueIntDataSet",
-        "ValueInt64Data",
-        "ValueInt64DataSet",
-        "ValueFloatData",
-        "ValueFloatDataSet",
-        "ValueBinaryData",
-        "ValueBinaryDataSet",
-        "ValueElementsCount",
-        "ValueNthElementValue",
-        "ValueNthElementValueSet",
-        "ValueNthElementKey",
-        "ValueEnumElements",
-        "ValueSetValueToKey",
-        "ValueGetValueOfKey",
-        "ValueToString",
-        "ValueFromString",
-        "ValueInvoke",
-        "ValueNativeFunctorSet",
-        "ValueIsNativeFunctor",
+        u"ValueInit",
+        u"ValueClear",
+        u"ValueCompare",
+        u"ValueCopy",
+        u"ValueIsolate",
+        u"ValueType",
+        u"ValueStringData",
+        u"ValueStringDataSet",
+        u"ValueIntData",
+        u"ValueIntDataSet",
+        u"ValueInt64Data",
+        u"ValueInt64DataSet",
+        u"ValueFloatData",
+        u"ValueFloatDataSet",
+        u"ValueBinaryData",
+        u"ValueBinaryDataSet",
+        u"ValueElementsCount",
+        u"ValueNthElementValue",
+        u"ValueNthElementValueSet",
+        u"ValueNthElementKey",
+        u"ValueEnumElements",
+        u"ValueSetValueToKey",
+        u"ValueGetValueOfKey",
+        u"ValueToString",
+        u"ValueFromString",
+        u"ValueInvoke",
+        u"ValueNativeFunctorSet",
+        u"ValueIsNativeFunctor",
 
         # tiscript VM API
-        "TIScriptAPI",
+        u"TIScriptAPI",
 
-        "SciterGetVM",
+        u"SciterGetVM",
 
         # since 3.1.0.12
-        "Sciter_v2V",
-        "Sciter_V2v",
+        u"Sciter_v2V",
+        u"Sciter_V2v",
 
         # since 3.1.0.18
-        "SciterOpenArchive",
-        "SciterGetArchiveItem",
-        "SciterCloseArchive",
+        u"SciterOpenArchive",
+        u"SciterGetArchiveItem",
+        u"SciterCloseArchive",
 
         # since 3.2.0.0
-        "SciterFireEvent",
+        u"SciterFireEvent",
 
-        "SciterGetCallbackParam",
-        "SciterPostCallback",
+        u"SciterGetCallbackParam",
+        u"SciterPostCallback",
 
         # since 3.3.1.0
-        "GetSciterGraphicsAPI",
+        u"GetSciterGraphicsAPI",
 
         # since 3.3.1.6 and it brokes compatibility with DX functions below
-        "GetSciterRequestAPI",
+        u"GetSciterRequestAPI",
 
         # ifdef WINDOWS
         # since 3.3.1.4
-        "SciterCreateOnDirectXWindow",
-        "SciterRenderOnDirectXWindow",
-        "SciterRenderOnDirectXTexture",
+        u"SciterCreateOnDirectXWindow",
+        u"SciterRenderOnDirectXWindow",
+        u"SciterRenderOnDirectXTexture",
 
         # since 4.0.0.0
-        "SciterProcX",
+        u"SciterProcX",
 
         ]
     # END OF ISciterAPI.
@@ -450,19 +452,19 @@ class ISciterAPI(Structure):
     def _make_fields(names):
         context = globals()
         fields = [(name, context[name]) for name in names if name in context]
-        fields.insert(0, ("version", UINT))
+        fields.insert(0, (u"version", UINT))
         return fields
 
     _fields_ = _make_fields(sciter_api)
 # end
 
-SCITER_LOAD_ERROR = """%s%s was not found in PATH.
+SCITER_LOAD_ERROR = u"""%s%s was not found in PATH.
   Please verify that Sciter SDK is installed and its binaries (SDK/bin, bin.osx or bin.gtk) are available in the path.""" % (SCITER_DLL_NAME, SCITER_DLL_EXT)
 
 
 def SciterAPI():
-    """Bind Sciter API."""
-    if hasattr(SciterAPI, "_api"):
+    u"""Bind Sciter API."""
+    if hasattr(SciterAPI, u"_api"):
         return SciterAPI._api
 
     import sys
@@ -475,15 +477,15 @@ def SciterAPI():
         # load 4.x version by default
         try:
             scdll = ctypes.WinDLL(SCITER_DLL_NAME)
-        except OSError as e:
-            errors.append("'%s': %s" % (SCITER_DLL_NAME, str(e)))
+        except OSError, e:
+            errors.append(u"'%s': %s" % (SCITER_DLL_NAME, unicode(e)))
 
             # try to find 3.x version
             try:
-                dllname = "sciter64" if sys.maxsize > 2**32 else "sciter32"
+                dllname = u"sciter64" if sys.maxsize > 2**32 else u"sciter32"
                 scdll = ctypes.WinDLL(dllname)
-            except OSError as e:
-                errors.append("'%s': %s" % (dllname, str(e)))
+            except OSError, e:
+                errors.append(u"'%s': %s" % (dllname, unicode(e)))
 
     else:
         # same behavior for OSX & Linux
@@ -502,11 +504,11 @@ def SciterAPI():
                                 return fname
                     return None
 
-                dllpath = find_in_path(dllfile, 'DYLD_LIBRARY_PATH' if SCITER_OSX else 'LD_LIBRARY_PATH')
+                dllpath = find_in_path(dllfile, u'DYLD_LIBRARY_PATH' if SCITER_OSX else u'LD_LIBRARY_PATH')
 
                 # try $PATH
                 if not dllpath:
-                    dllpath = find_in_path(dllfile, 'PATH')
+                    dllpath = find_in_path(dllfile, u'PATH')
 
             if not dllpath:
                 # last chance: try to load .so
@@ -514,8 +516,8 @@ def SciterAPI():
             try:
                 RTLD_LAZY = 1
                 return ctypes.CDLL(dllpath, ctypes.RTLD_LOCAL | RTLD_LAZY)
-            except OSError as e:
-                errors.append(str(e))
+            except OSError, e:
+                errors.append(unicode(e))
                 return None
 
         # try default name (4.1.4+)
@@ -524,10 +526,10 @@ def SciterAPI():
         if SCITER_LNX and scdll is None:
             # try the old name
             import sys
-            scdll = find_sciter("libsciter-gtk-64" if sys.maxsize > 2**32 else "libsciter-gtk-32")
+            scdll = find_sciter(u"libsciter-gtk-64" if sys.maxsize > 2**32 else u"libsciter-gtk-32")
 
     if not scdll:
-        raise ImportError(SCITER_LOAD_ERROR + "\n" + "\n".join(errors))
+        raise ImportError(SCITER_LOAD_ERROR + u"\n" + u"\n".join(errors))
 
     scdll.SciterAPI.restype = POINTER(ISciterAPI)
     SciterAPI._api = scdll.SciterAPI().contents
@@ -535,8 +537,8 @@ def SciterAPI():
 # end
 
 
-if __name__ == "__main__":
-    print("loading sciter dll: ")
+if __name__ == u"__main__":
+    print u"loading sciter dll: "
 
     scapi = SciterAPI()
 
@@ -546,5 +548,5 @@ if __name__ == "__main__":
     low = scapi.SciterVersion(False)
     version = (high >> 16, high & 0xFFFF, low >> 16, low & 0xFFFF)
 
-    print("sciter version %s, api v%d, class name: %s" % ('.'.join(map(str, version)), apiver, clsname))
+    print u"sciter version %s, api v%d, class name: %s" % (u'.'.join(imap(unicode, version)), apiver, clsname)
     scapi = None

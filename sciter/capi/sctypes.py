@@ -1,5 +1,6 @@
-"""Sciter platform-dependent types."""
+u"""Sciter platform-dependent types."""
 
+from __future__ import absolute_import
 import sys
 import ctypes
 
@@ -13,43 +14,32 @@ from ctypes import (POINTER,
 
 # 'win32', 'darwin', 'linux'
 SCITER_OS = sys.platform
-SCITER_WIN = SCITER_OS == 'win32'
-SCITER_OSX = SCITER_OS == 'darwin'
-SCITER_LNX = SCITER_OS == 'linux'
+SCITER_WIN = SCITER_OS == u'win32'
+SCITER_OSX = SCITER_OS == u'darwin'
+SCITER_LNX = SCITER_OS in (u'linux', u'linux2')
+
+
+def _wstrlen(address):
+    import sys
+    from ctypes import pointer, c_int16
+    memory_location = pointer(c_int16.from_address(address))
+    for n in xrange(0, sys.maxint):
+        if memory_location[n] == 0:
+            return n
+    return -1
 
 
 def utf16tostr(addr, size=-1):
-    """Read UTF-16 string from memory and encode as python string."""
+    u"""Read UTF-16 string from memory and encode as python string."""
     if addr is None:
         return None
-
-    cb = size if size > 0 else 32
+    cb = size if size > 0 else (_wstrlen(addr) * 2)
     bstr = ctypes.string_at(addr, cb)
-    if size >= 0:
-        return bstr.decode('utf-16le')
-
-    # lookup zero char
-    chunks = []
-    while True:
-        found = cb
-        for i in range(0, cb, 2):
-            c = bstr[i]
-            if c == 0x00:
-                found = i
-                break
-            pass
-        assert found % 2 == 0, "truncated string with len " + str(found)
-        chunks.append(bstr[0:found].decode('utf-16le'))
-        if found != cb:
-            break
-        addr = addr + cb
-        bstr = ctypes.string_at(addr, cb)
-        continue
-    return "".join(chunks)
+    return bstr.decode(u'utf-16le')
 
 
 class c_utf16_p(ctypes.c_char_p):
-    """A ctypes wrapper for UTF-16 string pointer."""
+    u"""A ctypes wrapper for UTF-16 string pointer."""
     # Taken from https://stackoverflow.com/a/35507014/736762, thanks to @eryksun.
     def __init__(self, value=None):
         super(c_utf16_p, self).__init__()
@@ -65,13 +55,13 @@ class c_utf16_p(ctypes.c_char_p):
     @value.setter
     def value(self, value,
               c_char_p=ctypes.c_char_p):
-        value = value.encode('utf-16le') + b'\x00'
+        value = value.encode(u'utf-16le') + '\x00'
         c_char_p.value.__set__(self, value)
 
     @classmethod
     def from_param(cls, obj):
-        if isinstance(obj, str):
-            obj = obj.encode('utf-16le') + b'\x00'
+        if isinstance(obj, unicode):
+            obj = obj.encode(u'utf-16le') + '\x00'
         return super(c_utf16_p, cls).from_param(obj)
 
     @classmethod
@@ -81,7 +71,7 @@ class c_utf16_p(ctypes.c_char_p):
 
 
 class UTF16LEField(object):
-    """Structure member wrapper for UTF-16 string pointers."""
+    u"""Structure member wrapper for UTF-16 string pointers."""
     # Taken from https://stackoverflow.com/a/35507014/736762, thanks to @eryksun.
     def __init__(self, name):
         self.name = name
@@ -94,15 +84,15 @@ class UTF16LEField(object):
         return utf16tostr(addr)
 
     def __set__(self, obj, value):
-        value = value.encode('utf-16le') + b'\x00'
+        value = value.encode(u'utf-16le') + '\x00'
         setattr(obj, self.name, value)
     pass
 
 
 if SCITER_WIN:
     # sciter.dll since 4.0.0.0
-    SCITER_DLL_NAME = "sciter"
-    SCITER_DLL_EXT = ".dll"
+    SCITER_DLL_NAME = u"sciter"
+    SCITER_DLL_EXT = u".dll"
 
     SCFN = ctypes.WINFUNCTYPE
     SC_CALLBACK = ctypes.WINFUNCTYPE
@@ -122,8 +112,8 @@ if SCITER_WIN:
 
 elif SCITER_OSX:
     # sciter-osx-32 since 3.3.1.8
-    SCITER_DLL_NAME = "sciter-osx-64" if sys.maxsize > 2**32 else "sciter-osx-32"
-    SCITER_DLL_EXT = ".dylib"
+    SCITER_DLL_NAME = u"sciter-osx-64" if sys.maxsize > 2**32 else u"sciter-osx-32"
+    SCITER_DLL_EXT = u".dylib"
 
     SCFN = ctypes.CFUNCTYPE
     SC_CALLBACK = ctypes.CFUNCTYPE
@@ -137,8 +127,8 @@ elif SCITER_OSX:
 elif SCITER_LNX:
     # libsciter since 3.3.1.7
     # libsciter-gtk.so instead of libsciter-gtk-64.so since 4.1.4
-    SCITER_DLL_NAME = "libsciter-gtk"
-    SCITER_DLL_EXT = ".so"
+    SCITER_DLL_NAME = u"libsciter-gtk"
+    SCITER_DLL_EXT = u".so"
 
     SCFN = ctypes.CFUNCTYPE
     SC_CALLBACK = ctypes.CFUNCTYPE
@@ -178,38 +168,38 @@ LPUINT = POINTER(UINT)
 
 
 class RECT(ctypes.Structure):
-    """Rectangle coordinates structure."""
-    _fields_ = [("left", c_int32),
-                ("top", c_int32),
-                ("right", c_int32),
-                ("bottom", c_int32)]
+    u"""Rectangle coordinates structure."""
+    _fields_ = [(u"left", c_int32),
+                (u"top", c_int32),
+                (u"right", c_int32),
+                (u"bottom", c_int32)]
 tagRECT = _RECTL = RECTL = RECT
 PRECT = LPRECT = POINTER(RECT)
 
 
 class POINT(ctypes.Structure):
-    """Point coordinates structure."""
-    _fields_ = [("x", c_int32),
-                ("y", c_int32)]
+    u"""Point coordinates structure."""
+    _fields_ = [(u"x", c_int32),
+                (u"y", c_int32)]
 tagPOINT = _POINTL = POINTL = POINT
 PPOINT = LPPOINT = POINTER(POINT)
 
 
 class SIZE(ctypes.Structure):
-    """SIZE structure for width and height."""
-    _fields_ = [("cx", c_int32),
-                ("cy", c_int32)]
+    u"""SIZE structure for width and height."""
+    _fields_ = [(u"cx", c_int32),
+                (u"cy", c_int32)]
 tagSIZE = SIZEL = SIZE
 PSIZE = LPSIZE = POINTER(SIZE)
 
 
 class MSG(ctypes.Structure):
-    """MSG structure for windows message queue."""
-    _fields_ = [("hWnd", HWINDOW),
-                ("message", c_uint32),
-                ("wParam", WPARAM),
-                ("lParam", LPARAM),
-                ("time", c_uint32),
-                ("pt", POINT)]
+    u"""MSG structure for windows message queue."""
+    _fields_ = [(u"hWnd", HWINDOW),
+                (u"message", c_uint32),
+                (u"wParam", WPARAM),
+                (u"lParam", LPARAM),
+                (u"time", c_uint32),
+                (u"pt", POINT)]
 
 PMSG = LPMSG = POINTER(MSG)

@@ -1,7 +1,8 @@
-"""Sciter's platform independent graphics interface.
+u"""Sciter's platform independent graphics interface.
 
 Incomplete.
 """
+from __future__ import absolute_import
 import enum
 
 from ctypes import Structure, POINTER, c_void_p
@@ -14,7 +15,7 @@ HTEXT = c_void_p
 
 
 class GRAPHIN_RESULT(enum.IntEnum):
-    """Result value for Sciter Graphics functions."""
+    u"""Result value for Sciter Graphics functions."""
     GRAPHIN_PANIC = -1
     GRAPHIN_OK = 0
     GRAPHIN_BAD_PARAM = 1
@@ -26,9 +27,9 @@ imageCreate = SCFN(GRAPHIN_RESULT, POINTER(HIMG), UINT, UINT, BOOL)
 
 
 class SciterGraphicsAPI(Structure):
-    """Sciter Graphics ABI."""
+    u"""Sciter Graphics ABI."""
     _fields_ = [
-        ("imageCreate", imageCreate),
+        (u"imageCreate", imageCreate),
         # TODO: rest of Graphics API
     ]
 

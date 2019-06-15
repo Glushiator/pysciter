@@ -1,6 +1,7 @@
-"""Sciter sample for Win32 API."""
+u"""Sciter sample for Win32 API."""
 
 # sciter import
+from __future__ import absolute_import
 import sciter
 from sciter import sapi
 from sciter.capi.scdef import *
@@ -33,36 +34,36 @@ WNDPROCTYPE = WINFUNCTYPE(LRESULT, HWND, c_uint, WPARAM, LPARAM)
 
 class WNDCLASSEX(Structure):
     _fields_ = [
-        ("cbSize", c_uint),
-        ("style", c_uint),
-        ("lpfnWndProc", WNDPROCTYPE),
-        ("cbClsExtra", c_int),
-        ("cbWndExtra", c_int),
-        ("hInstance", HANDLE),
-        ("hIcon", HANDLE),
-        ("hCursor", HANDLE),
-        ("hBrush", HANDLE),
-        ("lpszMenuName", LPCWSTR),
-        ("lpszClassName", LPCWSTR),
-        ("hIconSm", HANDLE)]
+        (u"cbSize", c_uint),
+        (u"style", c_uint),
+        (u"lpfnWndProc", WNDPROCTYPE),
+        (u"cbClsExtra", c_int),
+        (u"cbWndExtra", c_int),
+        (u"hInstance", HANDLE),
+        (u"hIcon", HANDLE),
+        (u"hCursor", HANDLE),
+        (u"hBrush", HANDLE),
+        (u"lpszMenuName", LPCWSTR),
+        (u"lpszClassName", LPCWSTR),
+        (u"hIconSm", HANDLE)]
 
 
 def on_load_data(ld):
-    """Custom documents loader, just for example."""
+    u"""Custom documents loader, just for example."""
     uri = ld.uri
     uri = uri
     return 0
 
 
 def on_create_behavior(ld):
-    """Custom behavior factory, just for example."""
+    u"""Custom behavior factory, just for example."""
     name = ld.behaviorName
     name = name
     return 0
 
 
 def on_sciter_callback(pld, param):
-    """Sciter notifications callback."""
+    u"""Sciter notifications callback."""
     ld = pld.contents
     if ld.code == SciterNotification.SC_LOAD_DATA:
         return on_load_data(cast(pld, POINTER(SCN_LOAD_DATA)).contents)
@@ -72,7 +73,7 @@ def on_sciter_callback(pld, param):
 
 
 def on_wnd_message(hWnd, Msg, wParam, lParam):
-    """WindowProc Function."""
+    u"""WindowProc Function."""
     handled = BOOL(0)
     lr = sapi.SciterProcND(hWnd, Msg, wParam, lParam, byref(handled))
     if handled:
@@ -87,7 +88,7 @@ def on_wnd_message(hWnd, Msg, wParam, lParam):
     except:
         import traceback
         etype, evalue, estack = sys.exc_info()
-        print("WndProc exception: %X, 0x%04X, 0x%X, 0x%X" % (hWnd, Msg, wParam, lParam))
+        print u"WndProc exception: %X, 0x%04X, 0x%X, 0x%X" % (hWnd, Msg, wParam, lParam)
         traceback.print_exception(etype, evalue, estack)
     return 0
 
@@ -116,13 +117,13 @@ def main():
 
     if not windll.user32.RegisterClassExW(byref(wndClass)):
         err = windll.kernel32.GetLastError()
-        print('Failed to register window: ', err)
+        print u'Failed to register window: ', err
         exit(0)
 
     hWnd = windll.user32.CreateWindowExW(0, clsname, title, WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, 800, 600, 0, 0, 0, 0)
     if not hWnd:
         err = windll.kernel32.GetLastError()
-        print('Failed to create window: ', err)
+        print u'Failed to create window: ', err
         exit(0)
 
     scproc = SciterHostCallback(on_sciter_callback)
@@ -137,12 +138,12 @@ def main():
     msg = MSG()
     lpmsg = pointer(msg)
 
-    print('Entering message loop')
+    print u'Entering message loop'
     while windll.user32.GetMessageW(lpmsg, 0, 0, 0) != 0:
         windll.user32.TranslateMessage(lpmsg)
         windll.user32.DispatchMessageW(lpmsg)
 
-    print('Quit.')
+    print u'Quit.'
 
-if __name__ == '__main__':
+if __name__ == u'__main__':
     main()

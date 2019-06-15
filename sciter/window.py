@@ -1,5 +1,6 @@
-"""High level window wrapper."""
+u"""High level window wrapper."""
 
+from __future__ import absolute_import
 import sciter.capi.scdef
 import sciter.capi.sctypes
 import sciter.host
@@ -10,11 +11,11 @@ _api = sciter.SciterAPI()
 
 
 class Window(sciter.platform.BaseWindow, sciter.host.Host, sciter.event.EventHandler):
-    """Basic Sciter window."""
+    u"""Basic Sciter window."""
 
     def __init__(self, ismain=False, ispopup=False, ischild=False, resizeable=True, parent=None, uni_theme=False, debug=True, pos=None, size=None):
-        """Create a new window and setup the sciter and dom callbacks."""
-        super().__init__()
+        u"""Create a new window and setup the sciter and dom callbacks."""
+        super(Window, self).__init__()
         from sciter.capi.scdef import SCITER_CREATE_WINDOW_FLAGS
 
         flags = SCITER_CREATE_WINDOW_FLAGS.SW_CONTROLS
@@ -42,7 +43,7 @@ class Window(sciter.platform.BaseWindow, sciter.host.Host, sciter.event.EventHan
             rect.left = pos[0]
             rect.top = pos[1]
             if size is None:
-                raise ValueError("`size` is required if `pos` is provided!")
+                raise ValueError(u"`size` is required if `pos` is provided!")
         if size is not None:
             rect.right = size[0]
             rect.bottom = size[1]
@@ -51,43 +52,43 @@ class Window(sciter.platform.BaseWindow, sciter.host.Host, sciter.event.EventHan
 
         self.hwnd = self._create(flags, rect=rect, parent=None)
         if not self.hwnd:
-            raise sciter.SciterError("Could not create window")
+            raise sciter.SciterError(u"Could not create window")
 
         self.setup_callback(self.hwnd)
         self.attach(window=self.hwnd)
         pass
 
     def collapse(self, hide=False):
-        """Minimize or hide window."""
-        return super().collapse(hide)
+        u"""Minimize or hide window."""
+        return super(Window, self).collapse(hide)
 
     def expand(self, maximize=False):
-        """Show or maximize window."""
-        return super().expand(maximize)
+        u"""Show or maximize window."""
+        return super(Window, self).expand(maximize)
 
     def dismiss(self):
-        """Close window."""
-        return super().dismiss()
+        u"""Close window."""
+        return super(Window, self).dismiss()
 
-    def set_title(self, title: str):
-        """Set native window title."""
+    def set_title(self, title):
+        u"""Set native window title."""
         self._title_changed = True
-        return super().set_title(title)
+        return super(Window, self).set_title(title)
 
     def get_title(self):
-        """Get native window title."""
-        return super().get_title()
+        u"""Get native window title."""
+        return super(Window, self).get_title()
 
     def run_app(self, show=True):
-        """Show window and run the main app message loop until window been closed."""
+        u"""Show window and run the main app message loop until window been closed."""
         if show:
             self.expand()
-        ret = super().run_app()
+        ret = super(Window, self).run_app()
         return ret
 
     def quit_app(self, code=0):
-        """Post quit message."""
-        return super().quit_app(code)
+        u"""Post quit message."""
+        return super(Window, self).quit_app(code)
 
     # overrideable
     def _document_ready(self, target):
@@ -95,7 +96,7 @@ class Window(sciter.platform.BaseWindow, sciter.host.Host, sciter.event.EventHan
         if self._title_changed:
             return
         root = sciter.Element(target)
-        title = root.find_first('html > head > title')
+        title = root.find_first(u'html > head > title')
         if title:
             self.set_title(title.get_text())
         pass

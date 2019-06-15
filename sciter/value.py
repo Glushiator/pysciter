@@ -1,7 +1,8 @@
-"""Python interface to sciter::value."""
+u"""Python interface to sciter::value."""
 
 # TODO: Date support.
 
+from __future__ import absolute_import
 import inspect
 import ctypes
 
@@ -21,20 +22,20 @@ _python_types = {VALUE_TYPE.T_UNDEFINED: type(None),
                  VALUE_TYPE.T_BOOL: bool,
                  VALUE_TYPE.T_INT: int,
                  VALUE_TYPE.T_FLOAT: float,
-                 VALUE_TYPE.T_STRING: str,
+                 VALUE_TYPE.T_STRING: unicode,
                  VALUE_TYPE.T_ARRAY: list,
                  VALUE_TYPE.T_MAP: dict,
-                 VALUE_TYPE.T_BYTES: bytes,
+                 VALUE_TYPE.T_BYTES: str,
                  VALUE_TYPE.T_DURATION: float,
                  VALUE_TYPE.T_ANGLE: float,
                  VALUE_TYPE.T_COLOR: int,
                  }
 
-_value_type_names = {val: name.lower()[2:] for name, val in VALUE_TYPE.__members__.items()}
+_value_type_names = dict((val, name.lower()[2:]) for name, val in VALUE_TYPE.__members__.items())
 
 
 def _subtype_name(subtype):
-    return {val: name.split('_')[-1].lower() for name, val in subtype.__members__.items()}
+    return dict((val, name.split(u'_')[-1].lower()) for name, val in subtype.__members__.items())
 
 _value_subtypes = {VALUE_TYPE.T_LENGTH: _subtype_name(VALUE_UNIT_TYPE),
                    VALUE_TYPE.T_DATE: _subtype_name(VALUE_UNIT_TYPE_DATE),
@@ -45,56 +46,56 @@ _value_subtypes = {VALUE_TYPE.T_LENGTH: _subtype_name(VALUE_UNIT_TYPE),
 
 # TODO: Rename it.
 class ValueError(sciter.error.SciterError):
-    """Raised by sciter.Value operations."""
+    u"""Raised by sciter.Value operations."""
 
     def __init__(self, hv_code, script=None):
-        """."""
-        msg = "Incompatible type" if hv_code == 2 else "Bad parameter"
+        u"""."""
+        msg = u"Incompatible type" if hv_code == 2 else u"Bad parameter"
         if script:
-            msg = msg + " at " + script
-        super().__init__(msg)
+            msg = msg + u" at " + script
+        super(ValueError, self).__init__(msg)
     pass
 
 
 # sciter.value
-class value():
-    """sciter::value pythonic wrapper."""
+class value(object):
+    u"""sciter::value pythonic wrapper."""
 
     ## @name Value constructors:
 
     @classmethod
-    def parse(cls, json: str, how=VALUE_STRING_CVT_TYPE.CVT_JSON_LITERAL, throw=True):
-        """Parse json string into value."""
+    def parse(cls, json, how=VALUE_STRING_CVT_TYPE.CVT_JSON_LITERAL, throw=True):
+        u"""Parse json string into value."""
         rv = value()
         ok = _api.ValueFromString(rv, json, len(json), how)
         if ok != 0 and throw:
-            raise sciter.value.ValueError(VALUE_RESULT.HV_BAD_PARAMETER, "value.parse")
+            raise sciter.value.ValueError(VALUE_RESULT.HV_BAD_PARAMETER, u"value.parse")
         return rv
 
     @classmethod
     def null(cls):
-        """Make explicit json null value."""
+        u"""Make explicit json null value."""
         rv = value()
         rv.data.t = VALUE_TYPE.T_NULL
         return rv
 
     @classmethod
     def symbol(cls, name):
-        """Make sciter symbol value."""
+        u"""Make sciter symbol value."""
         rv = value()
         rv._assign_str(name, VALUE_UNIT_TYPE_STRING.UT_STRING_SYMBOL)
         return rv
 
     @classmethod
     def secure_string(cls, val):
-        """Make sciter secure string value."""
+        u"""Make sciter secure string value."""
         rv = value()
         rv._assign_str(val, VALUE_UNIT_TYPE_STRING.UT_STRING_SECURE)
         return rv
 
     @classmethod
     def color(cls, val):
-        """Make explicit value of color type, in 0xAABBGGRR form."""
+        u"""Make explicit value of color type, in 0xAABBGGRR form."""
         rv = value()
         ok = _api.ValueIntDataSet(rv, val, VALUE_TYPE.T_COLOR, 0)
         rv._throw_if(ok)
@@ -102,7 +103,7 @@ class value():
 
     @classmethod
     def duration(cls, val):
-        """Make explicit duration value, in seconds."""
+        u"""Make explicit duration value, in seconds."""
         rv = value()
         ok = _api.ValueFloatDataSet(rv, val, VALUE_TYPE.T_DURATION, 0)
         rv._throw_if(ok)
@@ -110,7 +111,7 @@ class value():
 
     @classmethod
     def angle(cls, val):
-        """Make explicit angle value, in radians."""
+        u"""Make explicit angle value, in radians."""
         rv = value()
         ok = _api.ValueFloatDataSet(rv, val, VALUE_TYPE.T_ANGLE, 0)
         rv._throw_if(ok)
@@ -119,8 +120,8 @@ class value():
     ## @name Value methods:
 
     def __init__(self, val=None):
-        """Return a new sciter value wrapped object."""
-        super().__init__()
+        u"""Return a new sciter value wrapped object."""
+        super(value, self).__init__()
         self.data = SCITER_VALUE()
         self.ptr = ctypes.pointer(self.data)
         self._as_parameter_ = self.ptr
@@ -130,41 +131,41 @@ class value():
         pass
 
     def __del__(self):
-        """Destroy pointed value."""
+        u"""Destroy pointed value."""
         self.clear()
         pass
 
     def __call__(self, *args, **kwargs):
-        """Alias for self.call()."""
+        u"""Alias for self.call()."""
         return self.call(*args, **kwargs)
 
     def __repr__(self):
-        """Machine-like value visualization."""
+        u"""Machine-like value visualization."""
         t = VALUE_TYPE(self.data.t)
         tname = _value_type_names.get(self.data.t, hex(self.data.t))
         if t in (VALUE_TYPE.T_UNDEFINED, VALUE_TYPE.T_NULL):
-            return "<%s>" % (tname)
+            return u"<%s>" % (tname)
 
         if self.data.u != 0:
             subtypes = _value_subtypes.get(t)
             if subtypes:
-                tname = tname + ':' + subtypes.get(self.data.u, hex(self.data.u))
+                tname = tname + u':' + subtypes.get(self.data.u, hex(self.data.u))
 
-        return "<%s: %s>" % (tname, str(self))
+        return u"<%s: %s>" % (tname, unicode(self))
 
     def __str__(self):
-        """Human-like value representation."""
+        u"""Human-like value representation."""
         copy = self.copy()
         ok = _api.ValueToString(copy, VALUE_STRING_CVT_TYPE.CVT_JSON_LITERAL)
         return copy.get_value()
 
-    def __bool__(self):
-        """Value to bool conversion."""
+    def __nonzero__(self):
+        u"""Value to bool conversion."""
         # None, False, 0, "", (), [], {}
         return bool(self.get_value())
 
     def __bytes__(self):
-        """Value to bytes conversion."""
+        u"""Value to bytes conversion."""
         if not self.is_bytes():
             raise TypeError(repr(self))
         p = ctypes.c_char_p()
@@ -174,7 +175,7 @@ class value():
         return p.value
 
     def __eq__(self, other):
-        """Value comparison."""
+        u"""Value comparison."""
         if not isinstance(other, value):
             return NotImplemented
         ok = _api.ValueCompare(self, other)
@@ -188,11 +189,11 @@ class value():
     ## @name Container-like support:
 
     def __len__(self):
-        """Item count for array, map and function."""
+        u"""Item count for array, map and function."""
         return self.length()
 
     def __getitem__(self, key):
-        """Get item for array and map type."""
+        u"""Get item for array and map type."""
         if self.is_array() and isinstance(key, int):
             # array elements can be retrieved only by index
             key = len(self) + key if key < 0 else key
@@ -215,7 +216,7 @@ class value():
         pass
 
     def __setitem__(self, key, val):
-        """Set item for array and map type."""
+        u"""Set item for array and map type."""
         if self.is_array() or (self.is_undefined() and isinstance(key, int)):
             # set array element by index
             if not isinstance(key, int):
@@ -235,7 +236,7 @@ class value():
         pass
 
     def __contains__(self, item):
-        """Check whether item exists at array or map object."""
+        u"""Check whether item exists at array or map object."""
         xvals = self.values() if self.is_array() else self.keys()
         xitem = value(item)
         return xitem in xvals
@@ -244,9 +245,9 @@ class value():
     ## @name Sequence operations:
 
     def isolate(self):
-        """Convert T_OBJECT value types to T_MAP or T_ARRAY.
+        u"""Convert T_OBJECT value types to T_MAP or T_ARRAY.
 
-        It will convert all object-arrays to plain JSON arrays – removing all references of script objects.
+        It will convert all object-arrays to plain JSON arrays - removing all references of script objects.
 
         Also must be used if you need to pass values between different threads.
         """
@@ -255,40 +256,40 @@ class value():
         return self
 
     def copy(self):
-        """Return a shallow copy of the sciter::value."""
+        u"""Return a shallow copy of the sciter::value."""
         copy = value()
         ok = _api.ValueCopy(copy, self)
         self._throw_if(ok)
         return copy
 
     def copy_to(self, other):
-        """Copy value to external SCITER_VALUE."""
+        u"""Copy value to external SCITER_VALUE."""
         ok = _api.ValueCopy(other, self)
         self._throw_if(ok)
         return self
 
     def clear(self):
-        """Clear the VALUE and deallocates all assosiated structures that are not used anywhere else."""
+        u"""Clear the VALUE and deallocates all assosiated structures that are not used anywhere else."""
         ok = _api.ValueClear(self)
         self._throw_if(ok)
         return self
 
-    def length(self) -> int:
-        """Return the number of items in the T_ARRAY, T_MAP, T_FUNCTION and T_OBJECT sciter::value."""
+    def length(self):
+        u"""Return the number of items in the T_ARRAY, T_MAP, T_FUNCTION and T_OBJECT sciter::value."""
         if not self.get_type() in (VALUE_TYPE.T_ARRAY, VALUE_TYPE.T_MAP, VALUE_TYPE.T_FUNCTION, VALUE_TYPE.T_OBJECT):
-            raise AttributeError("'%s' has no attribute '%s'" % (self.get_type(), 'length'))
+            raise AttributeError(u"'%s' has no attribute '%s'" % (self.get_type(), u'length'))
         n = ctypes.c_int32()
         ok = _api.ValueElementsCount(self, byref(n))
         self._throw_if(ok)
         return n.value
 
     def values(self):
-        """Return a list of values of the of T_ARRAY, T_MAP, T_FUNCTION and T_OBJECT sciter::value."""
+        u"""Return a list of values of the of T_ARRAY, T_MAP, T_FUNCTION and T_OBJECT sciter::value."""
         if not self.get_type() in (VALUE_TYPE.T_ARRAY, VALUE_TYPE.T_MAP, VALUE_TYPE.T_FUNCTION, VALUE_TYPE.T_OBJECT):
-            raise AttributeError("'%s' has no attribute '%s'" % (self.get_type(), 'values'))
+            raise AttributeError(u"'%s' has no attribute '%s'" % (self.get_type(), u'values'))
         r = []
         xlen = self.length()
-        for n in range(self.length()):
+        for n in xrange(self.length()):
             xval = value()
             ok = _api.ValueNthElementValue(self, n, xval)
             self._throw_if(ok)
@@ -297,14 +298,14 @@ class value():
         return list(r)
 
     def append(self, val):
-        """Append value to the end of T_ARRAY sciter::value."""
+        u"""Append value to the end of T_ARRAY sciter::value."""
         xval = value(val)
         ok = _api.ValueNthElementValueSet(self.length(), xval)
         self._throw_if(ok)
         return self
 
     def insert(self, i, val):
-        """Insert or set value at given index of T_ARRAY, T_MAP, T_FUNCTION and T_OBJECT sciter::value."""
+        u"""Insert or set value at given index of T_ARRAY, T_MAP, T_FUNCTION and T_OBJECT sciter::value."""
         xval = value(val)
         ok = _api.ValueNthElementValueSet(i, xval)
         self._throw_if(ok)
@@ -314,11 +315,11 @@ class value():
     ## @name Mapping sequence operations:
 
     def keys(self):
-        """Return a new list with keys of the of T_MAP, T_FUNCTION and T_OBJECT sciter::value."""
+        u"""Return a new list with keys of the of T_MAP, T_FUNCTION and T_OBJECT sciter::value."""
         if not self.get_type() in (VALUE_TYPE.T_MAP, VALUE_TYPE.T_FUNCTION, VALUE_TYPE.T_OBJECT):
-            raise AttributeError("'%s' has no attribute '%s'" % (self.get_type(), 'keys'))
+            raise AttributeError(u"'%s' has no attribute '%s'" % (self.get_type(), u'keys'))
         r = []
-        for n in range(self.length()):
+        for n in xrange(self.length()):
             xval = value()
             ok = _api.ValueNthElementKey(self, n, xval)
             self._throw_if(ok)
@@ -326,9 +327,9 @@ class value():
         return tuple(r)
 
     def items(self):
-        """Return a new list of (key,value) pairs of the of T_MAP, T_FUNCTION and T_OBJECT sciter::value."""
+        u"""Return a new list of (key,value) pairs of the of T_MAP, T_FUNCTION and T_OBJECT sciter::value."""
         if not self.get_type() in (VALUE_TYPE.T_MAP, VALUE_TYPE.T_FUNCTION, VALUE_TYPE.T_OBJECT):
-            raise AttributeError("'%s' has no attribute '%s'" % (self.get_type(), 'items'))
+            raise AttributeError(u"'%s' has no attribute '%s'" % (self.get_type(), u'items'))
         r = []
         def on_element(param, key, val):
             r.append((value(key.contents), value(val.contents)))
@@ -340,7 +341,7 @@ class value():
 
     ## @name Underlaying value operations
     def call(self, *args, **kwargs):
-        """Function invokation for T_OBJECT/UT_OBJECT_FUNCTION.
+        u"""Function invokation for T_OBJECT/UT_OBJECT_FUNCTION.
 
         args: arguments passed to
         kwargs:
@@ -349,103 +350,103 @@ class value():
         """
         rv = value()
         argc, argv, this = sciter.Value.pack_args(*args, **kwargs)
-        name = kwargs.get('name')
+        name = kwargs.get(u'name')
         ok = _api.ValueInvoke(self, this, argc, argv, rv, name)
         sciter.Value.raise_from(rv, ok <= VALUE_RESULT.HV_OK, name)
         self._throw_if(ok)
         return rv.get_value()
 
     def is_undefined(self):
-        """."""
+        u"""."""
         t = self.get_type()
         return t == VALUE_TYPE.T_UNDEFINED
 
     def is_null(self):
-        """."""
+        u"""."""
         t = self.get_type()
         return t == VALUE_TYPE.T_NULL
 
     def is_bool(self):
-        """."""
+        u"""."""
         t = self.get_type()
         return t == VALUE_TYPE.T_BOOL
 
     def is_int(self):
-        """."""
+        u"""."""
         t = self.get_type()
         return t == VALUE_TYPE.T_INT
 
     def is_float(self):
-        """."""
+        u"""."""
         t = self.get_type()
         return t == VALUE_TYPE.T_FLOAT
 
     def is_bytes(self):
-        """."""
+        u"""."""
         t = self.get_type()
         return t == VALUE_TYPE.T_BYTES
 
     def is_string(self):
-        """."""
+        u"""."""
         t, u = self.get_type(with_unit=True)
         return t == VALUE_TYPE.T_STRING
 
     def is_error_string(self):
-        """."""
+        u"""."""
         t, u = self.get_type(with_unit=True)
         return t == VALUE_TYPE.T_STRING and u == VALUE_UNIT_TYPE_STRING.UT_STRING_ERROR
 
     def is_symbol(self):
-        """."""
+        u"""."""
         t, u = self.get_type(with_unit=True)
         return t == VALUE_TYPE.T_STRING and u == VALUE_UNIT_TYPE_STRING.UT_STRING_SYMBOL
 
     def is_color(self):
-        """."""
+        u"""."""
         t = self.get_type()
         return t == VALUE_TYPE.T_COLOR
 
     def is_duration(self):
-        """."""
+        u"""."""
         t = self.get_type()
         return t == VALUE_TYPE.T_DURATION
 
     def is_angle(self):
-        """."""
+        u"""."""
         t = self.get_type()
         return t == VALUE_TYPE.T_ANGLE
 
     def is_array(self):
-        """."""
+        u"""."""
         t = self.get_type()
         return t == VALUE_TYPE.T_ARRAY
 
     def is_map(self):
-        """."""
+        u"""."""
         t = self.get_type()
         return t == VALUE_TYPE.T_MAP
 
     def is_object(self):
-        """."""
+        u"""."""
         t = self.get_type()
         return t == VALUE_TYPE.T_OBJECT
 
     def is_function(self):
-        """."""
+        u"""."""
         t = self.get_type()
         return t == VALUE_TYPE.T_FUNCTION
 
     def is_native_function(self):
-        """."""
+        u"""."""
         return _api.ValueIsNativeFunctor(self) != 0
 
     def is_object_function(self):
-        """."""
+        u"""."""
         t, u = self.get_type(with_unit=True)
         return t == VALUE_TYPE.T_OBJECT and u == VALUE_UNIT_TYPE_OBJECT.UT_OBJECT_FUNCTION
 
     def get_type(self, py=False, with_unit=False):
-        """Return python type or sciter type with (optionally) unit subtype of sciter::value."""
+        u"""Return python type or sciter type with (optionally) unit subtype of sciter::value."""
         t = VALUE_TYPE(self.data.t)
         if py:
             # return Python type equivalent if supported
@@ -467,7 +468,7 @@ class value():
         pass
 
     def get_value(self):
-        """Get Python object of the sciter::value."""
+        u"""Get Python object of the sciter::value."""
         t = self.get_type()
         if t == VALUE_TYPE.T_UNDEFINED or t == VALUE_TYPE.T_NULL:
             return None
@@ -535,12 +536,12 @@ class value():
 
         # unsupported:
         t, u = self.get_type(with_unit=True)
-        u = str(u).rpartition('.')[2]
-        raise TypeError("%s (%s) is unsupported python type" % (str(t), str(u)))
+        u = unicode(u).rpartition(u'.')[2]
+        raise TypeError(u"%s (%s) is unsupported python type" % (unicode(t), unicode(u)))
         pass
 
     def set_value(self, val):
-        """Set Python object to the sciter::value.
+        u"""Set Python object to the sciter::value.
 
         sciter <=> python types:
           null
@@ -564,9 +565,9 @@ class value():
         elif isinstance(val, float):
             ok = _api.ValueFloatDataSet(self, val, VALUE_TYPE.T_FLOAT, 0)
             self._throw_if(ok)
-        elif isinstance(val, str):
+        elif isinstance(val, unicode):
             ok = self._assign_str(val, VALUE_UNIT_TYPE_STRING.UT_STRING_STRING)
-        elif isinstance(val, (bytes, bytearray)):
+        elif isinstance(val, (str, bytearray)):
             ok = _api.ValueBinaryDataSet(self, ctypes.c_char_p(val), len(val), VALUE_TYPE.T_BYTES, 0)
             self._throw_if(ok)
         elif isinstance(val, (list, tuple)):
@@ -576,7 +577,7 @@ class value():
             ok = self._assign_dict(val)
             self._throw_if(ok)
         elif isinstance(val, Exception):
-            ok = self._assign_str(str(val), VALUE_UNIT_TYPE_STRING.UT_STRING_ERROR)
+            ok = self._assign_str(unicode(val), VALUE_UNIT_TYPE_STRING.UT_STRING_ERROR)
         elif isinstance(val, (value, SCITER_VALUE)):
             ok = _api.ValueCopy(self, val)
             self._throw_if(ok)
@@ -584,7 +585,7 @@ class value():
             ok = self._assign_function(val)
             self._throw_if(ok)
         else:
-            raise TypeError(str(type(val)) + " is unsupported sciter type")
+            raise TypeError(unicode(type(val)) + u" is unsupported sciter type")
         pass
 
     def _assign_list(self, val):
@@ -619,10 +620,10 @@ class value():
         fc = _NativeFunctor(callable)
         return fc.store(self)
 
-    def _assign_str(self, val: str, units: int):
-        val = str(val)
+    def _assign_str(self, val, units):
+        val = unicode(val)
         if not sciter.SCITER_WIN:
-            bval = val.encode('utf-16le')
+            bval = val.encode(u'utf-16le')
             n = len(bval) >> 1
             ok = _api.ValueStringDataSet(self, bval, n, units)
         else:
@@ -636,36 +637,36 @@ class value():
             return
         import inspect
         context = inspect.stack()[1][3]
-        raise sciter.value.ValueError(code, "value." + context)
+        raise sciter.value.ValueError(code, u"value." + context)
 
     # utility methods
     @staticmethod
     def unpack_from(args, count):
-        """Unpack sciter values to python types."""
-        return [value(args[i]).get_value() for i in range(count)]
+        u"""Unpack sciter values to python types."""
+        return [value(args[i]).get_value() for i in xrange(count)]
 
     @staticmethod
     def pack_to(scval, val):
-        """Pack python value to SCITER_VALUE."""
+        u"""Pack python value to SCITER_VALUE."""
         v = value(val)
         v.copy_to(scval)
         pass
 
     @staticmethod
     def pack_args(*args, **kwargs):
-        """Pack arguments tuple as SCITER_VALUE array."""
+        u"""Pack arguments tuple as SCITER_VALUE array."""
         argc = len(args)
         args_type = SCITER_VALUE * argc
         argv = args_type()
         for i, v in enumerate(args):
             sv = sciter.Value(v)
             sv.copy_to(argv[i])
-        this = value(kwargs.get('this'))
+        this = value(kwargs.get(u'this'))
         return (argc, argv, this)
 
     @staticmethod
-    def raise_from(error_val, success: bool, name: str):
-        """Raise ScriptError or ScriptException from script error value."""
+    def raise_from(error_val, success, name):
+        u"""Raise ScriptError or ScriptException from script error value."""
         is_error = error_val.is_error_string()
         if not success and is_error:
             raise sciter.ScriptError(error_val.get_value(), name)
@@ -680,10 +681,10 @@ class value():
 _native_cache = []
 
 
-class _NativeFunctor():
-    """sciter::native_function wrapper."""
+class _NativeFunctor(object):
+    u"""sciter::native_function wrapper."""
     def __init__(self, func):
-        super().__init__()
+        super(_NativeFunctor, self).__init__()
         self.func = func
         self.scinvoke = sciter.capi.scdef.NATIVE_FUNCTOR_INVOKE(self.invoke)
         self.screlease = sciter.capi.scdef.NATIVE_FUNCTOR_RELEASE(self.release)
@@ -698,7 +699,7 @@ class _NativeFunctor():
         args = value.unpack_from(argv, argc)
         try:
             rv = self.func(*args)
-        except Exception as e:
+        except Exception, e:
             rv = e
         value.pack_to(retv, rv)
         pass

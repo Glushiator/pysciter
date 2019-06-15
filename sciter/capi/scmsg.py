@@ -1,6 +1,7 @@
-"""Message definitions to be passed to SciterProcX function.
+u"""Message definitions to be passed to SciterProcX function.
 
 """
+from __future__ import absolute_import
 import enum
 
 from ctypes import Structure, Union, c_void_p
@@ -10,7 +11,7 @@ from sciter.capi.scdom import HELEMENT
 
 
 class SCITER_X_MSG_CODE(enum.IntEnum):
-    """SCITER_X_MSG message/function identifier."""
+    u"""SCITER_X_MSG message/function identifier."""
     SXM_CREATE = 0
     SXM_DESTROY = 1
     SXM_SIZE = 2
@@ -19,33 +20,33 @@ class SCITER_X_MSG_CODE(enum.IntEnum):
 
 
 class SCITER_X_MSG(Structure):
-    """Common header of message structures passed to SciterProcX."""
+    u"""Common header of message structures passed to SciterProcX."""
     _fields_ = [
-        ("msg", UINT),  # SCITER_X_MSG_CODE
+        (u"msg", UINT),  # SCITER_X_MSG_CODE
     ]
 
 
 class SCITER_X_MSG_CREATE(Structure):
-    """Create event passed to Sciter."""
+    u"""Create event passed to Sciter."""
     _fields_ = [
-        ("header", SCITER_X_MSG),
-        ("backend", UINT),
-        ("transparent", BOOL),
+        (u"header", SCITER_X_MSG),
+        (u"backend", UINT),
+        (u"transparent", BOOL),
     ]
 
 
 class SCITER_X_MSG_DESTROY(Structure):
-    """Destroy event passed to Sciter."""
+    u"""Destroy event passed to Sciter."""
     _fields_ = [
-        ("header", SCITER_X_MSG),
+        (u"header", SCITER_X_MSG),
     ]
 
 
 class SCITER_X_MSG_SIZE(Structure):
     _fields_ = [
-        ("header", SCITER_X_MSG),
-        ("width", UINT),
-        ("height", UINT),
+        (u"header", SCITER_X_MSG),
+        (u"width", UINT),
+        (u"height", UINT),
     ]
 
 
@@ -57,23 +58,23 @@ class SCITER_PAINT_TARGET_TYPE(enum.IntEnum):
 
 class SCITER_X_MSG_PAINT_RECEIVER(Structure):
     _fields_ = [
-        ("param", c_void_p),
-        ("callback", ELEMENT_BITMAP_RECEIVER),
+        (u"param", c_void_p),
+        (u"callback", ELEMENT_BITMAP_RECEIVER),
     ]
 
 
 class SCITER_X_MSG_PAINT_TARGET(Union):
     _fields_ = [
-        ("hdc", HDC),
-        ("receiver", SCITER_X_MSG_PAINT_RECEIVER),
+        (u"hdc", HDC),
+        (u"receiver", SCITER_X_MSG_PAINT_RECEIVER),
     ]
 
 
 class SCITER_X_MSG_PAINT(Structure):
     _fields_ = [
-        ("header", SCITER_X_MSG),
-        ("element", HELEMENT),          # layer #HELEMENT, can be NULL if whole tree (document) needs to be rendered.
-        ("isFore", BOOL),               # if element is not null tells if that element is fore-layer.
-        ("targetType", UINT),           # one of SCITER_PAINT_TARGET_TYPE values.
-        ("target", SCITER_X_MSG_PAINT_TARGET)
+        (u"header", SCITER_X_MSG),
+        (u"element", HELEMENT),          # layer #HELEMENT, can be NULL if whole tree (document) needs to be rendered.
+        (u"isFore", BOOL),               # if element is not null tells if that element is fore-layer.
+        (u"targetType", UINT),           # one of SCITER_PAINT_TARGET_TYPE values.
+        (u"target", SCITER_X_MSG_PAINT_TARGET)
     ]

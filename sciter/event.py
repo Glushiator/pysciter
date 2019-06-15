@@ -1,5 +1,6 @@
-"""Behaviors support (a.k.a windowless controls)."""
+u"""Behaviors support (a.k.a windowless controls)."""
 
+from __future__ import absolute_import
 import ctypes
 
 import sciter.capi.scdef
@@ -10,15 +11,15 @@ from sciter.capi.scdom import SCDOM_RESULT, HELEMENT
 _api = sciter.SciterAPI()
 
 
-class EventHandler:
-    """DOM event handler which can be attached to any DOM element."""
+class EventHandler(object):
+    u"""DOM event handler which can be attached to any DOM element."""
 
     ALL_EVENTS = EVENT_GROUPS.HANDLE_ALL
     DEFAULT_EVENTS = EVENT_GROUPS.HANDLE_INITIALIZATION | EVENT_GROUPS.HANDLE_SIZE | EVENT_GROUPS.HANDLE_BEHAVIOR_EVENT | EVENT_GROUPS.HANDLE_SCRIPTING_METHOD_CALL
 
     def __init__(self, window=None, element=None, subscription=DEFAULT_EVENTS):
-        """Attach event handler to dom::element or sciter::window."""
-        super().__init__()
+        u"""Attach event handler to dom::element or sciter::window."""
+        super(EventHandler, self).__init__()
         self.subscription = subscription
         self.element = None
         self._attached_to_window = None
@@ -34,7 +35,7 @@ class EventHandler:
         pass
 
     def attach(self, window=None, element=None, subscription=DEFAULT_EVENTS):
-        """Attach event handler to dom::element or sciter::window."""
+        u"""Attach event handler to dom::element or sciter::window."""
         assert(window or element)
         self.subscription = subscription
         self._event_handler_proc = sciter.capi.scdef.ElementEventProc(self._element_proc)
@@ -43,42 +44,42 @@ class EventHandler:
             self._attached_to_window = window
             ok = _api.SciterWindowAttachEventHandler(window, self._event_handler_proc, tag, subscription)
             if ok != SCDOM_RESULT.SCDOM_OK:
-                raise sciter.SciterError("Could not attach to window")
+                raise sciter.SciterError(u"Could not attach to window")
         elif element:
             self._attached_to_element = element
             ok = _api.SciterAttachEventHandler(element, self._event_handler_proc, tag)
             if ok != SCDOM_RESULT.SCDOM_OK:
-                raise sciter.SciterError("Could not attach to element")
+                raise sciter.SciterError(u"Could not attach to element")
         pass
 
     def detach(self):
-        """Detach event handler from dom::element or sciter::window."""
+        u"""Detach event handler from dom::element or sciter::window."""
         tag = id(self)
         if self._attached_to_window:
             ok = _api.SciterWindowDetachEventHandler(self._attached_to_window, self._event_handler_proc, tag)
             if ok != SCDOM_RESULT.SCDOM_OK:
-                raise sciter.SciterError("Could not detach from window")
+                raise sciter.SciterError(u"Could not detach from window")
             self._attached_to_window = None
         elif self._attached_to_element:
             ok = _api.SciterDetachEventHandler(self._attached_to_element, self._event_handler_proc, tag)
             if ok != SCDOM_RESULT.SCDOM_OK:
-                raise sciter.SciterError("Could not attach from element")
+                raise sciter.SciterError(u"Could not attach from element")
             self._attached_to_element = None
         pass
 
     def dispatch(self, name, args):
-        """Route script call to python handler directly."""
+        u"""Route script call to python handler directly."""
         # fn = getattr(self, name, None)
         # if fn is not None:
         #     return fn(*args)
         pass
 
     def set_dispatch_options(self, enable=True, require_attribute=True, dynamic_handlers=False):
-        """Set the various script dispatch options."""
-        self._dispatcher['enabled'] = enable                # enable or disable dispatching of script calls to class handlers
-        self._dispatcher['runtime'] = dynamic_handlers      # class handlers may be added at runtime, so we won't cache it
-        self._dispatcher['require'] = require_attribute     # class handlers require @sciter.script attribute
-        self._dispatcher['handlers'] = {}
+        u"""Set the various script dispatch options."""
+        self._dispatcher[u'enabled'] = enable                # enable or disable dispatching of script calls to class handlers
+        self._dispatcher[u'runtime'] = dynamic_handlers      # class handlers may be added at runtime, so we won't cache it
+        self._dispatcher[u'require'] = require_attribute     # class handlers require @sciter.script attribute
+        self._dispatcher[u'handlers'] = {}
         self._dispatcher_update(True)
         return self
 
@@ -88,92 +89,92 @@ class EventHandler:
     ## @param target - target element of this event
 
     def attached(self, he):
-        """Called when handler was attached to element."""
+        u"""Called when handler was attached to element."""
         pass
 
     def detached(self, he):
-        """Called when handler was detached from element."""
+        u"""Called when handler was detached from element."""
         pass
 
     def document_complete(self):
-        """Notification that document finishes its loading - all requests for external resources are finished."""
+        u"""Notification that document finishes its loading - all requests for external resources are finished."""
         pass
 
     def document_close(self):
-        """The last notification before document removal from the DOM."""
+        u"""The last notification before document removal from the DOM."""
         pass
 
-    def on_subscription(self, groups: EVENT_GROUPS):
-        """Return list of event groups this event_handler is subscribed to."""
+    def on_subscription(self, groups):
+        u"""Return list of event groups this event_handler is subscribed to."""
         return self.subscription
 
-    def on_script_call(self, name: str, args: list):
-        """Script calls from CSSS! script and TIScript. Arguments are Sciter types. Return something to prevent @script handlers to be executed."""
+    def on_script_call(self, name, args):
+        u"""Script calls from CSSS! script and TIScript. Arguments are Sciter types. Return something to prevent @script handlers to be executed."""
         # Return something except None to indicate that function handled (e.g. found).
         pass
 
-    def on_event(self, source: HELEMENT, target: HELEMENT, code: BEHAVIOR_EVENTS, phase: PHASE_MASK, reason: CLICK_REASON):
-        """Notification event from builtin behaviors."""
+    def on_event(self, source, target, code, phase, reason):
+        u"""Notification event from builtin behaviors."""
         pass
 
-    def on_data_arrived(self, nm: DATA_ARRIVED_PARAMS):
-        """Requested data has been delivered."""
+    def on_data_arrived(self, nm):
+        u"""Requested data has been delivered."""
         pass
 
     ## @}
 
     def _document_ready(self, target):
-        """Document created, script namespace initialized. target -> the document."""
+        u"""Document created, script namespace initialized. target -> the document."""
         pass
 
     def _dispatcher_update(self, force=False):
-        if not self._dispatcher['enabled']:
+        if not self._dispatcher[u'enabled']:
             return
-        if not force and not self._dispatcher['runtime']:
+        if not force and not self._dispatcher[u'runtime']:
             return
-        required = self._dispatcher['require']
+        required = self._dispatcher[u'require']
         handlers = {}
         for name in dir(self):
             member = getattr(self, name, None)
 
             # check optional attribute for name mapping
-            attr = getattr(member, '_from_sciter', False)
-            fnname = attr if isinstance(attr, str) else name
+            attr = getattr(member, u'_from_sciter', False)
+            fnname = attr if isinstance(attr, unicode) else name
             if attr or not required:
                 handlers[fnname] = member
-        self._dispatcher['handlers'] = handlers
+        self._dispatcher[u'handlers'] = handlers
         pass
 
     def _on_script_call(self, f):
         # update handlers on every call if needed
         self._dispatcher_update()
 
-        fname = f.name.decode('utf-8')
-        fn = self._dispatcher['handlers'].get(fname)
+        fname = f.name.decode(u'utf-8')
+        fn = self._dispatcher[u'handlers'].get(fname)
         rv = None
 
         # call raw handler first
         if True:
             try:
-                args = [sciter.Value(f.argv[i]) for i in range(f.argc)]
+                args = [sciter.Value(f.argv[i]) for i in xrange(f.argc)]
                 rv = self.on_script_call(fname, args)
-            except Exception as e:
+            except Exception, e:
                 import traceback
                 traceback.print_exc()
                 rv = e
 
         # if not handled, call decorated method
         if rv is None and fn:
-            cfg = getattr(fn, '_sciter_cfg', {})
-            skip_exception = not cfg.get('safe', True)
+            cfg = getattr(fn, u'_sciter_cfg', {})
+            skip_exception = not cfg.get(u'safe', True)
             try:
-                if cfg.get('convert'):
+                if cfg.get(u'convert'):
                     args = sciter.Value.unpack_from(f.argv, f.argc)
                 rv = fn(*args)
-            except Exception as e:
+            except Exception, e:
                 import traceback
                 traceback.print_exc()
-                rv = str(e) if skip_exception else e
+                rv = unicode(e) if skip_exception else e
 
         # if handled, pack result for Sciter
         if fn or rv is not None:

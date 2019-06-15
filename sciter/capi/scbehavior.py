@@ -1,5 +1,6 @@
-"""C interface for behaviors support (a.k.a windowless controls)."""
+u"""C interface for behaviors support (a.k.a windowless controls)."""
 
+from __future__ import absolute_import
 import enum
 import ctypes
 
@@ -12,7 +13,7 @@ import sciter.capi.sctiscript as sctiscript
 
 
 class EVENT_GROUPS(enum.IntEnum):
-    """event groups."""
+    u"""event groups."""
     HANDLE_INITIALIZATION = 0x0000  # attached/detached */
     HANDLE_MOUSE = 0x0001           # mouse events */
     HANDLE_KEY = 0x0002             # key events */
@@ -33,14 +34,14 @@ class EVENT_GROUPS(enum.IntEnum):
 
 
 class PHASE_MASK(enum.IntEnum):
-    """."""
+    u"""."""
     BUBBLING = 0
     SINKING = 0x8000
     HANDLED = 0x10000
     SINKING_HANDLED = HANDLED|SINKING
 
 class MOUSE_BUTTONS(enum.IntEnum):
-    """."""
+    u"""."""
     MAIN_MOUSE_BUTTON = 1
     PROP_MOUSE_BUTTON = 2
     MIDDLE_MOUSE_BUTTON = 4
@@ -59,7 +60,7 @@ class INITIALIZATION_EVENTS(enum.IntEnum):
 
 class INITIALIZATION_PARAMS(ctypes.Structure):
     _fields_ = [
-        ("cmd", UINT),  # INITIALIZATION_EVENTS
+        (u"cmd", UINT),  # INITIALIZATION_EVENTS
     ]
 
 
@@ -82,7 +83,7 @@ class MOUSE_EVENTS(enum.IntEnum):
     DROP,
     DRAG_ENTER,
     DRAG_LEAVE,
-    DRAG_REQUEST) = range(13)
+    DRAG_REQUEST) = xrange(13)
 
     MOUSE_CLICK = 0xFF
     DRAGGING = 0x100
@@ -90,16 +91,16 @@ class MOUSE_EVENTS(enum.IntEnum):
 
 class MOUSE_PARAMS(ctypes.Structure):
     _fields_ = [
-        ("cmd", UINT),           # MOUSE_EVENTS
-        ("target", HELEMENT),        # target element
-        ("pos", POINT),           # position of cursor, element relative
-        ("pos_view", POINT),      # position of cursor, view relative
-        ("button_state", UINT),  # MOUSE_BUTTONS
-        ("alt_state", UINT),     # KEYBOARD_STATES
-        ("cursor_type", UINT),   # CURSOR_TYPE to set, see CURSOR_TYPE
-        ("is_on_icon", BOOL),    # mouse is over icon (foreground-image, foreground-repeat:no-repeat)
-        ("dragging", HELEMENT),      # element that is being dragged over, this field is not NULL if (cmd & DRAGGING) != 0
-        ("dragging_mode", UINT), # see DRAGGING_TYPE.
+        (u"cmd", UINT),           # MOUSE_EVENTS
+        (u"target", HELEMENT),        # target element
+        (u"pos", POINT),           # position of cursor, element relative
+        (u"pos_view", POINT),      # position of cursor, view relative
+        (u"button_state", UINT),  # MOUSE_BUTTONS
+        (u"alt_state", UINT),     # KEYBOARD_STATES
+        (u"cursor_type", UINT),   # CURSOR_TYPE to set, see CURSOR_TYPE
+        (u"is_on_icon", BOOL),    # mouse is over icon (foreground-image, foreground-repeat:no-repeat)
+        (u"dragging", HELEMENT),      # element that is being dragged over, this field is not NULL if (cmd & DRAGGING) != 0
+        (u"dragging_mode", UINT), # see DRAGGING_TYPE.
     ]
 
 
@@ -119,7 +120,7 @@ class CURSOR_TYPE(enum.IntEnum):
     CURSOR_HELP,
     CURSOR_HAND,
     CURSOR_DRAG_MOVE,
-    CURSOR_DRAG_COPY) = range(16)
+    CURSOR_DRAG_COPY) = xrange(16)
 
 
 class KEY_EVENTS(enum.IntEnum):
@@ -130,10 +131,10 @@ class KEY_EVENTS(enum.IntEnum):
 
 class KEY_PARAMS(ctypes.Structure):
     _fields_ = [
-        ("cmd", UINT),           # KEY_EVENTS
-        ("target", HELEMENT),        # target element
-        ("key_code", UINT),      # key scan code, or character unicode for KEY_CHAR
-        ("alt_state", UINT),     # KEYBOARD_STATES
+        (u"cmd", UINT),           # KEY_EVENTS
+        (u"target", HELEMENT),        # target element
+        (u"key_code", UINT),      # key scan code, or character unicode for KEY_CHAR
+        (u"alt_state", UINT),     # KEYBOARD_STATES
     ]
 
 
@@ -146,11 +147,11 @@ class FOCUS_EVENTS(enum.IntEnum):
 
 class FOCUS_PARAMS(ctypes.Structure):
     _fields_ = [
-        ("cmd", UINT),           # FOCUS_EVENTS
-        ("target", HELEMENT),        # target element, for FOCUS_LOST it is a handle of new focus element
+        (u"cmd", UINT),           # FOCUS_EVENTS
+        (u"target", HELEMENT),        # target element, for FOCUS_LOST it is a handle of new focus element
                                  #    and for FOCUS_GOT it is a handle of old focus element, can be NULL
-        ("by_mouse_click", BOOL),  # true if focus is being set by mouse click
-        ("cancel", BOOL),          # in FOCUS_LOST phase setting this field to true will cancel transfer focus from old element to the new one.
+        (u"by_mouse_click", BOOL),  # true if focus is being set by mouse click
+        (u"cancel", BOOL),          # in FOCUS_LOST phase setting this field to true will cancel transfer focus from old element to the new one.
     ]
 
 
@@ -165,7 +166,7 @@ class SCROLL_EVENTS(enum.IntEnum):
     SCROLL_SLIDER_RELEASED,
     SCROLL_CORNER_PRESSED,
     SCROLL_CORNER_RELEASED,
-    SCROLL_SLIDER_PRESSED) = range(11)
+    SCROLL_SLIDER_PRESSED) = xrange(11)
 
 
 class SCROLL_SOURCE(enum.IntEnum):
@@ -173,17 +174,17 @@ class SCROLL_SOURCE(enum.IntEnum):
     SCROLL_SOURCE_KEYBOARD,     # `SCROLL_PARAMS::reason` contains a key code
     SCROLL_SOURCE_SCROLLBAR,    # `SCROLL_PARAMS::reason` contains a `SCROLLBAR_PART` enum
     SCROLL_SOURCE_ANIMATOR,
-    ) = range(4)
+    ) = xrange(4)
 
 
 class SCROLL_PARAMS(ctypes.Structure):
     _fields_ = [
-        ("cmd", UINT),          # SCROLL_EVENTS
-        ("target", HELEMENT),   # target element
-        ("pos", INT),           # scroll position if SCROLL_POS
-        ("vertical", BOOL),     # true if from vertical scrollbar
-        ("source", UINT),       # SCROLL_SOURCE
-        ("reason", UINT),       # SCROLLBAR_PART or key code, see SCROLL_SOURCE
+        (u"cmd", UINT),          # SCROLL_EVENTS
+        (u"target", HELEMENT),   # target element
+        (u"pos", INT),           # scroll position if SCROLL_POS
+        (u"vertical", BOOL),     # true if from vertical scrollbar
+        (u"source", UINT),       # SCROLL_SOURCE
+        (u"reason", UINT),       # SCROLLBAR_PART or key code, see SCROLL_SOURCE
     ]
 
 
@@ -193,7 +194,7 @@ class GESTURE_CMD(enum.IntEnum):
     GESTURE_PAN,          # The pan gesture.
     GESTURE_ROTATE,       # The rotation gesture.
     GESTURE_TAP1,         # The tap gesture.
-    GESTURE_TAP2) = range(6)   # The two-finger tap gesture.
+    GESTURE_TAP2) = xrange(6)   # The two-finger tap gesture.
 
 
 class GESTURE_STATE(enum.IntEnum):
@@ -217,15 +218,15 @@ class GESTURE_TYPE_FLAGS(enum.IntEnum):
 
 class GESTURE_PARAMS(ctypes.Structure):
     _fields_ = [
-        ("cmd", UINT),           # GESTURE_EVENTS
-        ("target", HELEMENT),        # target element
-        ("pos", POINT),           # position of cursor, element relative
-        ("pos_view", POINT),      # position of cursor, view relative
-        ("flags", UINT),         # for GESTURE_REQUEST combination of GESTURE_FLAGs.
+        (u"cmd", UINT),           # GESTURE_EVENTS
+        (u"target", HELEMENT),        # target element
+        (u"pos", POINT),           # position of cursor, element relative
+        (u"pos_view", POINT),      # position of cursor, view relative
+        (u"flags", UINT),         # for GESTURE_REQUEST combination of GESTURE_FLAGs.
                              # for others it is a combination of GESTURE_STATe's
-        ("delta_time", UINT),    # period of time from previous event.
-        ("delta_xy", SIZE),      # for GESTURE_PAN it is a direction vector
-        ("delta_v", c_double),       # for GESTURE_ROTATE - delta angle (radians)
+        (u"delta_time", UINT),    # period of time from previous event.
+        (u"delta_xy", SIZE),      # for GESTURE_PAN it is a direction vector
+        (u"delta_v", c_double),       # for GESTURE_ROTATE - delta angle (radians)
                              # for GESTURE_ZOOM - zoom value, is less or greater than 1.0
     ]
 
@@ -239,10 +240,10 @@ class DRAW_EVENTS(enum.IntEnum):
 
 class DRAW_PARAMS(ctypes.Structure):
     _fields_ = [
-        ("cmd", UINT),        # DRAW_EVENTS
-        ("gfx", HGFX),        # hdc to paint on
-        ("area", RECT),       # element area, to get invalid area to paint use GetClipBox,
-        ("reserved", UINT),   # for DRAW_BACKGROUND/DRAW_FOREGROUND - it is a border box
+        (u"cmd", UINT),        # DRAW_EVENTS
+        (u"gfx", HGFX),        # hdc to paint on
+        (u"area", RECT),       # element area, to get invalid area to paint use GetClipBox,
+        (u"reserved", UINT),   # for DRAW_BACKGROUND/DRAW_FOREGROUND - it is a border box
     ]                         # for DRAW_CONTENT - it is a content box
 
 
@@ -252,7 +253,7 @@ class CONTENT_CHANGE_BITS(enum.IntEnum):
 
 
 class BEHAVIOR_EVENTS(enum.IntEnum):
-    """Behavior event code."""
+    u"""Behavior event code."""
     BUTTON_CLICK = 0               # click on button
     BUTTON_PRESS = 1               # mouse down or key down in button
     BUTTON_STATE_CHANGED = 2       # checkbox/radio/slider changed its state/value
@@ -379,26 +380,26 @@ class EDIT_CHANGED_REASON(enum.IntEnum):
 
 class BEHAVIOR_EVENT_PARAMS(ctypes.Structure):
     _fields_ = [
-        ("cmd", UINT),              # BEHAVIOR_EVENTS
-        ("heTarget", HELEMENT),     # target element handler, in MENU_ITEM_CLICK this is owner element that caused this menu - e.g. context menu owner
+        (u"cmd", UINT),              # BEHAVIOR_EVENTS
+        (u"heTarget", HELEMENT),     # target element handler, in MENU_ITEM_CLICK this is owner element that caused this menu - e.g. context menu owner
                                     # In scripting this field named as Event.owner
-        ("he", HELEMENT),           # source element e.g. in SELECTION_CHANGED it is new selected <option>, in MENU_ITEM_CLICK it is menu item (LI) element
-        ("reason", UINT_PTR),       # CLICK_REASON or EDIT_CHANGED_REASON - UI action causing change.
+        (u"he", HELEMENT),           # source element e.g. in SELECTION_CHANGED it is new selected <option>, in MENU_ITEM_CLICK it is menu item (LI) element
+        (u"reason", UINT_PTR),       # CLICK_REASON or EDIT_CHANGED_REASON - UI action causing change.
                                     # In case of custom event notifications this may be any
                                     # application specific value.
-        ("data", SCITER_VALUE),     # auxiliary data accompanied with the event. E.g. FORM_SUBMIT event is using this field to pass collection of values.
-        ("name", LPCWSTR),          # name of a custom event (when `cmd` is `CUSTOM`), since 4.2.8.0
+        (u"data", SCITER_VALUE),     # auxiliary data accompanied with the event. E.g. FORM_SUBMIT event is using this field to pass collection of values.
+        (u"name", LPCWSTR),          # name of a custom event (when `cmd` is `CUSTOM`), since 4.2.8.0
     ]
 
 
 class TIMER_PARAMS(ctypes.Structure):
     _fields_ = [
-        ("timerId", UINT_PTR),     # timerId that was used to create timer by using HTMLayoutSetTimerEx
+        (u"timerId", UINT_PTR),     # timerId that was used to create timer by using HTMLayoutSetTimerEx
     ]
 
 
 class BEHAVIOR_METHOD_IDENTIFIERS(enum.IntEnum):
-    """"Identifiers of methods currently supported by intrinsic behaviors."""
+    u""""Identifiers of methods currently supported by intrinsic behaviors."""
     DO_CLICK = 0
 
     GET_TEXT_VALUE = 1
@@ -424,49 +425,49 @@ class BEHAVIOR_METHOD_IDENTIFIERS(enum.IntEnum):
 
 class SCRIPTING_METHOD_PARAMS(ctypes.Structure):
     _fields_ = [
-        ("name", LPCSTR),                   # method name
-        ("argv", POINTER(SCITER_VALUE)),    # vector of arguments
-        ("argc", UINT),                     # argument count
-        ("result", SCITER_VALUE),           # return value
+        (u"name", LPCSTR),                   # method name
+        (u"argv", POINTER(SCITER_VALUE)),    # vector of arguments
+        (u"argc", UINT),                     # argument count
+        (u"result", SCITER_VALUE),           # return value
     ]
 
 
 class TISCRIPT_METHOD_PARAMS(ctypes.Structure):
     _fields_ = [
         # parameters are accessible through tiscript::args.
-        ("vm", sctiscript.HVM),
-        ("tag", sctiscript.value),     # method id (symbol)
-        ("result", sctiscript.value),  # return value
+        (u"vm", sctiscript.HVM),
+        (u"tag", sctiscript.value),     # method id (symbol)
+        (u"result", sctiscript.value),  # return value
     ]
 
 
 # GET_VALUE/SET_VALUE methods params
 class VALUE_PARAMS(ctypes.Structure):
     _fields_ = [
-        ("methodID", UINT),
-        ("val", SCITER_VALUE),
+        (u"methodID", UINT),
+        (u"val", SCITER_VALUE),
     ]
 
 
 # IS_EMPTY method params
 class IS_EMPTY_PARAMS(ctypes.Structure):
     _fields_ = [
-        ("methodID", UINT),
-        ("is_empty", UINT),  # !0 - is empty
+        (u"methodID", UINT),
+        (u"is_empty", UINT),  # !0 - is empty
     ]
 
 
 # see SciterRequestElementData
 class DATA_ARRIVED_PARAMS(ctypes.Structure):
     _fields_ = [
-        ("initiator", HELEMENT),  # element intiator of HTMLayoutRequestElementData request,
-        ("data", LPCBYTE),       # data buffer
-        ("dataSize", UINT),      # size of data
-        ("dataType", UINT),      # data type passed "as is" from HTMLayoutRequestElementData
-        ("status", UINT),        # status = 0 (dataSize == 0) - unknown error.
+        (u"initiator", HELEMENT),  # element intiator of HTMLayoutRequestElementData request,
+        (u"data", LPCBYTE),       # data buffer
+        (u"dataSize", UINT),      # size of data
+        (u"dataType", UINT),      # data type passed "as is" from HTMLayoutRequestElementData
+        (u"status", UINT),        # status = 0 (dataSize == 0) - unknown error.
                                  # status = 100..505 - http response status, Note: 200 - OK!
                                  # status > 12000 - wininet error code, see ERROR_INTERNET_*** in wininet.h
-        ("_uri", LPCWSTR),       # requested url
+        (u"_uri", LPCWSTR),       # requested url
     ]
-    uri = UTF16LEField('_uri')
+    uri = UTF16LEField(u'_uri')
 

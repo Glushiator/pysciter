@@ -1,7 +1,11 @@
+from __future__ import with_statement
+from __future__ import absolute_import
 import unittest
 
 import sciter
 from sciter.value import value, VALUE_TYPE
+from itertools import imap
+from itertools import izip
 
 
 class TestSciterValue(unittest.TestCase):
@@ -48,7 +52,7 @@ class TestSciterValue(unittest.TestCase):
         pass
 
     def test_06ctor_types(self):
-        items = [None, False, True, 0, 1, 2.0, u'3', b'4', [3, 4], {'5': 5, '6': 6}]
+        items = [None, False, True, 0, 1, 2.0, u'3', '4', [3, 4], {u'5': 5, u'6': 6}]
         for item in items:
             with self.subTest(val=item):
                 xval = value(item)
@@ -60,7 +64,7 @@ class TestSciterValue(unittest.TestCase):
         pass
 
     def test_07get_value(self):
-        items = [None, False, True, 0, 1, 2.0, u'3', b'4', [3, 4], {'5': 5, '6': 6}]
+        items = [None, False, True, 0, 1, 2.0, u'3', '4', [3, 4], {u'5': 5, u'6': 6}]
         for item in items:
             with self.subTest(val=item):
                 xval = value(item)
@@ -81,7 +85,7 @@ class TestSciterValue(unittest.TestCase):
         pass
 
     def test_09bool(self):
-        items = [None, False, True, 0, 1, 0.0, 1.0, u'', u'3', (), (1, 2), [], [3, 4], {}, {'5': 5, '6': 6}]
+        items = [None, False, True, 0, 1, 0.0, 1.0, u'', u'3', (), (1, 2), [], [3, 4], {}, {u'5': 5, u'6': 6}]
         for item in items:
             with self.subTest(val=item):
                 xval = value(item)
@@ -92,14 +96,14 @@ class TestSciterValue(unittest.TestCase):
         pass
 
     def test_10str(self):
-        items = [None, False, True, 0, 1, 2.0, u'3', b'4', [3, 4], {'5': 5, '6': 6}]
+        items = [None, False, True, 0, 1, 2.0, u'3', '4', [3, 4], {u'5': 5, u'6': 6}]
         ritems = []
         sitems = []
         for item in items:
             with self.subTest(val=item):
                 xval = value(item)
                 rval = repr(xval)
-                sval = str(xval)
+                sval = unicode(xval)
                 ritems.append(rval)
                 sitems.append(sval)
                 continue
@@ -112,12 +116,12 @@ class TestSciterValue(unittest.TestCase):
             with self.subTest(val=item):
                 xval = value(item)
                 with self.assertRaises(TypeError):
-                    bval = bytes(xval)
-                    print(bval)
+                    bval = str(xval)
+                    print bval
                 continue
-        item = b'hello, world'
+        item = 'hello, world'
         xval = value(item)
-        self.assertEqual(bytes(xval), bytes(item))
+        self.assertEqual(str(xval), str(item))
         pass
 
     def test_11func(self):
@@ -134,14 +138,14 @@ class TestSciterValue(unittest.TestCase):
         pass
 
     def test_12len(self):
-        items = [[], {}, [3, 4], {'5': 5, '6': 6}]
+        items = [[], {}, [3, 4], {u'5': 5, u'6': 6}]
         for item in items:
             with self.subTest(val=item):
                 xval = value(item)
                 self.assertEqual(len(xval), len(item))
                 continue
 
-        items = [None, False, True, 0, 1, 2.0, u'3', b'4', ]
+        items = [None, False, True, 0, 1, 2.0, u'3', '4', ]
         for item in items:
             with self.subTest(val=item):
                 with self.assertRaises(AttributeError):
@@ -151,7 +155,7 @@ class TestSciterValue(unittest.TestCase):
         pass
 
     def test_13parse(self):
-        items = ["", 'null', '1', '"2"', '2.0', 'true', '[3, 4]', '{"5": 5, "6": 6, seven: "seven"}']
+        items = [u"", u'null', u'1', u'"2"', u'2.0', u'true', u'[3, 4]', u'{"5": 5, "6": 6, seven: "seven"}']
         for item in items:
             with self.subTest(val=item):
                 xval = value.parse(item)
@@ -160,12 +164,12 @@ class TestSciterValue(unittest.TestCase):
                 else:
                     self.assertFalse(xval)
         with self.assertRaises(sciter.value.ValueError):
-            item = '{item: '
+            item = u'{item: '
             xval = value.parse(item)
         pass
 
     def test_14getitem(self):
-        items = ['[3,4,5]', '{"five": 5, "seven": 7}']
+        items = [u'[3,4,5]', u'{"five": 5, "seven": 7}']
         with self.subTest(val=items[0]):
             xval = value.parse(items[0])
 
@@ -177,16 +181,16 @@ class TestSciterValue(unittest.TestCase):
                 r = xval[20]
 
             with self.assertRaises(TypeError):
-                r = xval['key']
+                r = xval[u'key']
 
         with self.subTest(val=items[1]):
             xval = value.parse(items[1])
 
-            self.assertEqual(xval['five'], value(5))
+            self.assertEqual(xval[u'five'], value(5))
 
             with self.assertRaises(KeyError):
-                r = xval['not exist']
-                print(r)
+                r = xval[u'not exist']
+                print r
         pass
 
     def test_16setitem(self):
@@ -195,11 +199,11 @@ class TestSciterValue(unittest.TestCase):
         xval[-1] = 7
         self.assertEqual(xval, value([7, 2, 7]))
 
-        xval = value({'0': 0})
-        xval['0'] = 'zero'
-        xval['7'] = 7
-        self.assertEqual(xval['0'], value('zero'))
-        self.assertEqual(xval['7'], value(7))
+        xval = value({u'0': 0})
+        xval[u'0'] = u'zero'
+        xval[u'7'] = 7
+        self.assertEqual(xval[u'0'], value(u'zero'))
+        self.assertEqual(xval[u'7'], value(7))
 
         # undefined -> array
         xval = value([])
@@ -212,34 +216,34 @@ class TestSciterValue(unittest.TestCase):
 
         with self.assertRaises(KeyError):
             xval = value([])  # array
-            xval['key'] = 'value'
+            xval[u'key'] = u'value'
 
         # undefined -> map
         xval = value({})
         self.assertEqual(xval.get_type(), VALUE_TYPE.T_MAP)
 
         xval = value()
-        xval['0'] = 7
+        xval[u'0'] = 7
         self.assertEqual(xval.get_type(), VALUE_TYPE.T_MAP)
-        self.assertEqual(xval['0'], value(7))
+        self.assertEqual(xval[u'0'], value(7))
         pass
 
-    @unittest.skip("__delitem__ is not supported")
+    @unittest.skip(u"__delitem__ is not supported")
     def test_17delitem(self):
-        items = [i for i in range(5)]
-        item = dict(zip(map(lambda x: str(x), items), items))
+        items = [i for i in xrange(5)]
+        item = dict(izip(imap(lambda x: unicode(x), items), items))
         xval = value(item)
-        del xval['2']  # middle
-        del xval['0']  # first
-        del xval['4']  # last
+        del xval[u'2']  # middle
+        del xval[u'0']  # first
+        del xval[u'4']  # last
         self.assertEqual(xval, value({1: 1, 3: 3}))
         pass
 
     def test_18contains(self):
-        xval = value({'0': 0, '7': 7})
-        self.assertIn('0', xval)
-        self.assertIn('7', xval)
-        self.assertNotIn('8', xval)
+        xval = value({u'0': 0, u'7': 7})
+        self.assertIn(u'0', xval)
+        self.assertIn(u'7', xval)
+        self.assertNotIn(u'8', xval)
         pass
 
     def test_19explicit(self):
@@ -249,21 +253,21 @@ class TestSciterValue(unittest.TestCase):
         self.assertFalse(xval)
 
         # #symbol
-        xval = value.symbol('hello')
+        xval = value.symbol(u'hello')
         self.assertTrue(xval.is_symbol())
         self.assertTrue(xval.is_string())   # string is a generic type for error, symbol and string itself
-        self.assertEqual(xval.get_value(), 'hello')
+        self.assertEqual(xval.get_value(), u'hello')
 
         # secure string
-        xval = value.secure_string('secure')
+        xval = value.secure_string(u'secure')
         self.assertTrue(xval.is_string())
         self.assertEqual(xval.get_type(with_unit=True), (VALUE_TYPE.T_STRING, 2))  # VALUE_UNIT_TYPE_STRING.UT_STRING_SECURE
-        self.assertEqual(xval.get_value(), 'secure')
+        self.assertEqual(xval.get_value(), u'secure')
 
         # error
-        xval = value(TypeError('error'))
+        xval = value(TypeError(u'error'))
         self.assertTrue(xval.is_error_string())
-        self.assertEqual(xval.get_value(), 'error')  # doesn't raise exception.
+        self.assertEqual(xval.get_value(), u'error')  # doesn't raise exception.
 
         if sciter.version_num() > 0x04000100:
             # color
@@ -294,7 +298,7 @@ class TestSciterValue(unittest.TestCase):
         xval.clear()
         self.assertTrue(xval.is_undefined())
 
-        xval = value.symbol('hello')
+        xval = value.symbol(u'hello')
         self.assertTrue(xval.is_symbol())
         xval.clear()
         self.assertTrue(xval.is_undefined())
@@ -307,7 +311,7 @@ class TestSciterValue(unittest.TestCase):
         pass
 
     def test_21items(self):
-        item = {'5': 5, '6': 6}
+        item = {u'5': 5, u'6': 6}
         xval = value(item)
         self.assertEqual(len(xval), 2)
 
@@ -323,11 +327,11 @@ class TestSciterValue(unittest.TestCase):
     # Mapping sequence operations
 
 
-if __name__ == '__main__':
+if __name__ == u'__main__':
     import sys
     try:
         re = unittest.main(exit=False, failfast=True, verbosity=2)
     except:
         et, ev, eb = sys.exc_info()
-        print(sys.exc_info())
+        print sys.exc_info()
     sys.exit(0)

@@ -1,5 +1,6 @@
-"""DOM access methods, C interface."""
+u"""DOM access methods, C interface."""
 
+from __future__ import absolute_import
 import enum
 import ctypes
 
@@ -12,7 +13,7 @@ HSARCHIVE = ctypes.c_void_p
 
 
 class SCDOM_RESULT(enum.IntEnum):
-    """Result value for Sciter DOM functions."""
+    u"""Result value for Sciter DOM functions."""
 
     # function completed successfully
     SCDOM_OK = 0
@@ -37,37 +38,37 @@ class SCDOM_RESULT(enum.IntEnum):
 
 
 class HPOSITION(ctypes.Structure):
-    """."""
+    u"""."""
     _fields_ = [
-        ("hn", HNODE),
-        ("pos", INT),
+        (u"hn", HNODE),
+        (u"pos", INT),
         ]
 
 
 class METHOD_PARAMS(ctypes.Structure):
-    """."""
-    _fields_ = [("methodID", UINT), ]
+    u"""."""
+    _fields_ = [(u"methodID", UINT), ]
 
 
 class REQUEST_PARAM(ctypes.Structure):
-    """."""
+    u"""."""
     _fields_ = [
-        ("_name", LPCWSTR),
-        ("_value", LPCWSTR),
+        (u"_name", LPCWSTR),
+        (u"_value", LPCWSTR),
         ]
-    name = UTF16LEField('_name')
-    value = UTF16LEField('_value')
+    name = UTF16LEField(u'_name')
+    value = UTF16LEField(u'_value')
 
 
 class NODE_TYPE(enum.IntEnum):
-    """."""
+    u"""."""
     NT_ELEMENT = 0
     NT_TEXT = 1
     NT_COMMENT = 2
 
 
 class NODE_INS_TARGET(enum.IntEnum):
-    """."""
+    u"""."""
     NIT_BEFORE = 0
     NIT_AFTER = 1
     NIT_APPEND = 2
@@ -75,7 +76,7 @@ class NODE_INS_TARGET(enum.IntEnum):
 
 
 class ELEMENT_AREAS(enum.IntEnum):
-    """Bounding rectangle of the element."""
+    u"""Bounding rectangle of the element."""
 
     ROOT_RELATIVE = 0x01        # - or this flag if you want to get HTMLayout window relative coordinates,
     SELF_RELATIVE = 0x02        # - "or" this flag if you want to get coordinates relative to the origin
@@ -94,13 +95,13 @@ class ELEMENT_AREAS(enum.IntEnum):
 
 
 class SCITER_SCROLL_FLAGS(enum.IntEnum):
-    """."""
+    u"""."""
     SCROLL_TO_TOP = 0x01
     SCROLL_SMOOTH = 0x10
 
 
 class SET_ELEMENT_HTML(enum.IntEnum):
-    """."""
+    u"""."""
     SIH_REPLACE_CONTENT = 0     # replace content of the element
     SIH_INSERT_AT_START = 1     # insert html before first child of the element
     SIH_APPEND_AFTER_LAST = 2   # insert html after last child of the element
@@ -110,7 +111,7 @@ class SET_ELEMENT_HTML(enum.IntEnum):
 
 
 class ELEMENT_STATE_BITS(enum.IntEnum):
-    """Runtime DOM element state."""
+    u"""Runtime DOM element state."""
     STATE_LINK             = 0x00000001
     STATE_HOVER            = 0x00000002
     STATE_ACTIVE           = 0x00000004
@@ -149,7 +150,7 @@ class ELEMENT_STATE_BITS(enum.IntEnum):
 
 
 class REQUEST_TYPE(enum.IntEnum):
-    """."""
+    u"""."""
     GET_ASYNC = 0
     POST_ASYNC = 1
     GET_SYNC = 2
@@ -157,7 +158,7 @@ class REQUEST_TYPE(enum.IntEnum):
 
 
 class CTL_TYPE(enum.IntEnum):
-    """DOM control type. Note: it was changed in 4.0.3."""
+    u"""DOM control type. Note: it was changed in 4.0.3."""
     CTL_NO = 0                # This dom element has no behavior at all.
     CTL_UNKNOWN = 1           # This dom element has behavior but its type is unknown.
     CTL_EDIT = 2              # Single line edit box.

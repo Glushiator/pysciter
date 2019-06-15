@@ -1,5 +1,6 @@
-"""Common Sciter declarations."""
+u"""Common Sciter declarations."""
 
+from __future__ import absolute_import
 import enum
 
 from ctypes import *
@@ -11,7 +12,7 @@ from sciter.capi.scvalue import PSCITER_VALUE
 
 
 class LOAD_RESULT(enum.IntEnum):
-    """."""
+    u"""."""
     LOAD_OK = 0       # do default loading if data not set
     LOAD_DISCARD = 1  # discard request completely
     LOAD_DELAYED = 2  # data will be delivered later by the host application.
@@ -20,7 +21,7 @@ class LOAD_RESULT(enum.IntEnum):
 
 
 class SciterNotification(enum.IntEnum):
-    """."""
+    u"""."""
     SC_LOAD_DATA = 0x01
     SC_DATA_LOADED = 0x02
     SC_ATTACH_BEHAVIOR = 0x04
@@ -30,7 +31,7 @@ class SciterNotification(enum.IntEnum):
 
 
 class SCITER_RT_OPTIONS(enum.IntEnum):
-    """Sciter engine options (global or per-window)."""
+    u"""Sciter engine options (global or per-window)."""
     SCITER_SMOOTH_SCROLL = 1       # value: TRUE - enable, value: FALSE - disable, enabled by default
     SCITER_CONNECTION_TIMEOUT = 2  # global; value: milliseconds, connection timeout of http client
     SCITER_HTTPS_ERROR = 3         # global; value: 0 - drop connection, 1 - use builtin dialog, 2 - accept connection silently
@@ -105,52 +106,52 @@ class SCITER_CREATE_WINDOW_FLAGS(enum.IntEnum):
 
 
 class SCITER_CALLBACK_NOTIFICATION(Structure):
-    """."""
+    u"""."""
     _fields_ = [
-        ("code", c_uint),
-        ("hwnd", HWINDOW),
+        (u"code", c_uint),
+        (u"hwnd", HWINDOW),
     ]
 
 
 class SCN_LOAD_DATA(Structure):
-    """."""
+    u"""."""
     _fields_ = [
-        ("code", c_uint),
-        ("hwnd", HWINDOW),
-        ("_uri", LPCWSTR),
-        ("outData", LPCBYTE),
-        ("outDataSize", UINT),
-        ("dataType", UINT),
-        ("requestId", HREQUEST),
-        ("principal", HELEMENT),
-        ("initiator", HELEMENT),
+        (u"code", c_uint),
+        (u"hwnd", HWINDOW),
+        (u"_uri", LPCWSTR),
+        (u"outData", LPCBYTE),
+        (u"outDataSize", UINT),
+        (u"dataType", UINT),
+        (u"requestId", HREQUEST),
+        (u"principal", HELEMENT),
+        (u"initiator", HELEMENT),
         ]
-    uri = UTF16LEField('_uri')
+    uri = UTF16LEField(u'_uri')
 
 
 class SCN_DATA_LOADED(Structure):
-    """."""
+    u"""."""
     _fields_ = [
-        ("code", c_uint),
-        ("hwnd", HWINDOW),
-        ("_uri", LPCWSTR),
-        ("data", LPCBYTE),
-        ("dataSize", UINT),
-        ("dataType", UINT),
-        ("status", UINT),
+        (u"code", c_uint),
+        (u"hwnd", HWINDOW),
+        (u"_uri", LPCWSTR),
+        (u"data", LPCBYTE),
+        (u"dataSize", UINT),
+        (u"dataType", UINT),
+        (u"status", UINT),
         ]
-    uri = UTF16LEField('_uri')
+    uri = UTF16LEField(u'_uri')
 
 
 class SCN_ATTACH_BEHAVIOR(Structure):
-    """."""
+    u"""."""
     _fields_ = [
-        ("code", c_uint),
-        ("hwnd", HWINDOW),
-        ("element", HELEMENT),
-        ("behaviorName", LPCSTR),
-        ("elementProc", c_void_p),
-        ("elementTag", LPVOID),
+        (u"code", c_uint),
+        (u"hwnd", HWINDOW),
+        (u"element", HELEMENT),
+        (u"behaviorName", LPCSTR),
+        (u"elementProc", c_void_p),
+        (u"elementTag", LPVOID),
     ]
 
 
@@ -182,20 +183,20 @@ NATIVE_FUNCTOR_RELEASE = CFUNCTYPE(VOID, LPVOID)
 ELEMENT_BITMAP_RECEIVER = SC_CALLBACK(VOID, LPCBYTE, INT, INT, UINT, UINT, LPVOID)
 
 
-class StringReceiver():
-    """LPCWSTR_RECEIVER wrapper."""
+class StringReceiver(object):
+    u"""LPCWSTR_RECEIVER wrapper."""
 
-    def __init__(self, string_type: str):
-        """Construct callback by one of 'char', 'wchar' or 'byte' string type."""
+    def __init__(self, string_type):
+        u"""Construct callback by one of 'char', 'wchar' or 'byte' string type."""
         self.text = None
-        if string_type == 'char':
+        if string_type == u'char':
             self.cb = LPCSTR_RECEIVER(self._a2s)
-        elif string_type == 'byte':
+        elif string_type == u'byte':
             self.cb = LPCBYTE_RECEIVER(self._b2s)
-        elif string_type == 'wchar':
+        elif string_type == u'wchar':
             self.cb = LPCWSTR_RECEIVER(self._w2s)
         else:
-            raise ValueError("Unknown callback type. Use one of 'char', 'byte' or 'wchar'.")
+            raise ValueError(u"Unknown callback type. Use one of 'char', 'byte' or 'wchar'.")
         self._as_parameter_ = self.cb
         pass
 
@@ -206,11 +207,11 @@ class StringReceiver():
 
     def _a2s(self, sz, n, ctx):
         # char
-        self.text = sz.decode('utf-8')
+        self.text = sz.decode(u'utf-8')
         pass
 
     def _b2s(self, sz, n, ctx):
         # byte
-        self.text = sz.decode('utf-8')
+        self.text = sz.decode(u'utf-8')
         pass
     pass

@@ -1,16 +1,17 @@
-"""Simple DOM example (Go sciter example port)."""
+u"""Simple DOM example (Go sciter example port)."""
 
+from __future__ import absolute_import
 import sciter, sys
 
-if __name__ == "__main__":
+if __name__ == u"__main__":
     frame = sciter.Window(ismain=True, uni_theme=False)
-    frame.set_title("Inserting example")
+    frame.set_title(u"Inserting example")
 
     # load simple html
-    frame.load_html(b"""<html>html</html>""")
+    frame.load_html("""<html>html</html>""")
 
     # create div and link as child of root node (<html>)
-    div = sciter.Element.create("div", "hello, world")
+    div = sciter.Element.create(u"div", u"hello, world")
 
     root = frame.get_root()
     root.insert(div, 0)

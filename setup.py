@@ -1,26 +1,27 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
+from __future__ import absolute_import
 try:
     from setuptools import setup
 except ImportError:
     from distutils.core import setup
 
 config = {
-    'name': 'PySciter',
-    'author': 'pravic',
-    'author_email': 'ehysta@gmail.com',
-    'description': 'Python bindings for the Sciter - Embeddable HTML/CSS/script engine (cross-platform desktop GUI toolkit).',
-    'url': 'https://github.com/sciter-sdk/pysciter/',
-    'download_url': 'https://github.com/sciter-sdk/pysciter/releases',
-    'bugtrack_url': 'https://github.com/sciter-sdk/pysciter/issues',
-    'version': '0.4.30',
-    'platforms': ['Windows', 'Linux', 'MacOS X', ],
-    'packages': ['sciter', 'sciter.capi'],
-    'install_requires': [''],
+    'name': u'PySciter',
+    'author': u'pravic',
+    'author_email': u'ehysta@gmail.com',
+    'description': u'Python bindings for the Sciter - Embeddable HTML/CSS/script engine (cross-platform desktop GUI toolkit).',
+    'url': u'https://github.com/sciter-sdk/pysciter/',
+    'download_url': u'https://github.com/sciter-sdk/pysciter/releases',
+    'bugtrack_url': u'https://github.com/sciter-sdk/pysciter/issues',
+    'version': u'0.4.30',
+    'platforms': [u'Windows', u'Linux', u'MacOS X', ],
+    'packages': [u'sciter', u'sciter.capi'],
+    'install_requires': [u''],
     'scripts': [],
-    'keywords': ['gui', 'sciter', 'tiscript', 'htmlayout', 'html', 'css', 'web', 'cross-platform', ],
-    'license': 'MIT',
+    'keywords': [u'gui', u'sciter', u'tiscript', u'htmlayout', u'html', u'css', u'web', u'cross-platform', ],
+    'license': u'MIT',
     'classifiers': [
         'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Developers',
@@ -49,7 +50,7 @@ config = {
         'Topic :: Software Development :: User Interfaces',
         'Topic :: Software Development :: Widget Sets',
     ],
-    'long_description': """
+    'long_description': u"""
 Introduction
 ============
 Sciter (https://sciter.com) is an embeddable HTML/CSS/script engine with GPU accelerated rendering for desktop application UI.

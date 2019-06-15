@@ -1,11 +1,12 @@
-"""More complex PySciter sample."""
+u"""More complex PySciter sample."""
 
+from __future__ import absolute_import
 import sciter
 
 # main frame
 class Frame(sciter.Window):
     def __init__(self):
-        super().__init__(ismain=True, uni_theme=True)
+        super(Frame, self).__init__(ismain=True, uni_theme=True)
         pass
 
     def on_subscription(self, groups):
@@ -15,14 +16,14 @@ class Frame(sciter.Window):
 
     def on_script_call(self, name, args):
         # script calls
-        print(name, "called from script")
+        print name, u"called from script"
         return self.dispatch(name, args)
 
 
     ## @name The following functions are called from scripts:
     @sciter.script
     def PythonCall(self, arg):
-        return "Pythonic window (%s)" % str(arg)
+        return u"Pythonic window (%s)" % unicode(arg)
 
     @sciter.script
     def GetNativeApi(self):
@@ -31,51 +32,51 @@ class Frame(sciter.Window):
             return a + b
 
         def on_sub(a, b):
-            raise Exception("sub(%d,%d) raised exception" % (a, b))
+            raise Exception(u"sub(%d,%d) raised exception" % (a, b))
 
-        api = { 'add': on_add,              # plain function
-                'sub': on_sub,              # raised exception will propagated to script
-                'mul': lambda a,b: a * b,   # lambdas support
+        api = { u'add': on_add,              # plain function
+                u'sub': on_sub,              # raised exception will propagated to script
+                u'mul': lambda a,b: a * b,   # lambdas support
                 }
         return api
 
     @sciter.script
     def ScriptCallTest(self):
-        print("calling 'hello'")
-        answer = self.call_function('hello', "hello, python")
-        print("call answer: ", answer)
+        print u"calling 'hello'"
+        answer = self.call_function(u'hello', u"hello, python")
+        print u"call answer: ", answer
 
-        print("get and call 'hello'")
-        answer = self.eval_script('hello')
-        answer = answer.call('argument', name='on_script_call')
-        print("get answer: ", answer)
+        print u"get and call 'hello'"
+        answer = self.eval_script(u'hello')
+        answer = answer.call(u'argument', name=u'on_script_call')
+        print u"get answer: ", answer
 
-        print("eval 'hello'")
-        answer = self.eval_script('hello("42");')
-        print("eval answer: ", answer)
-
-        try:
-            print("\ncalling 'raise_error'")
-            answer = self.call_function('raise_error', 17, '42', False)
-            print("expected ScriptError")
-        except sciter.ScriptError as e:
-            print("answer: ", str(e))
-
+        print u"eval 'hello'"
+        answer = self.eval_script(u'hello("42");')
+        print u"eval answer: ", answer
 
         try:
-            print("\nget and call 'raise_error'")
-            answer = self.eval_script('raise_error')
-            answer = answer.call('argument', name='on_script_call')
-            print("expected ScriptError")
-        except sciter.ScriptError as e:
-            print("answer: ", str(e))
+            print u"\ncalling 'raise_error'"
+            answer = self.call_function(u'raise_error', 17, u'42', False)
+            print u"expected ScriptError"
+        except sciter.ScriptError, e:
+            print u"answer: ", unicode(e)
+
 
         try:
-            print("\ncalling unexisting function")
-            answer = self.call_function('raise_error2')
-            print("expected ScriptError")
-        except sciter.ScriptError as e:
-            print("answer: ", str(e))
+            print u"\nget and call 'raise_error'"
+            answer = self.eval_script(u'raise_error')
+            answer = answer.call(u'argument', name=u'on_script_call')
+            print u"expected ScriptError"
+        except sciter.ScriptError, e:
+            print u"answer: ", unicode(e)
+
+        try:
+            print u"\ncalling unexisting function"
+            answer = self.call_function(u'raise_error2')
+            print u"expected ScriptError"
+        except sciter.ScriptError, e:
+            print u"answer: ", unicode(e)
         return True
 
     ## @}
@@ -83,11 +84,11 @@ class Frame(sciter.Window):
 # end
 
 
-if __name__ == '__main__':
+if __name__ == u'__main__':
     sciter.runtime_features(allow_sysinfo=True)
 
     import os
-    htm = os.path.join(os.path.dirname(__file__), 'pysciter.htm')
+    htm = os.path.join(os.path.dirname(__file__), u'pysciter.htm')
     frame = Frame()
     frame.load_file(htm)
     frame.run_app()

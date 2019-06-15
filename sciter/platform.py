@@ -1,4 +1,5 @@
-"""Platform-dependent code."""
+u"""Platform-dependent code."""
+from __future__ import absolute_import
 import ctypes
 
 import sciter
@@ -10,8 +11,8 @@ _api = sciter.SciterAPI()
 
 if SCITER_WIN:
 
-    class WindowsWindow:
-        """Win32 window."""
+    class WindowsWindow(object):
+        u"""Win32 window."""
 
         _initialized = False
 
@@ -25,35 +26,35 @@ if SCITER_WIN:
             return _api.SciterCreateWindow(flags, ctypes.byref(rect), self._msg_delegate, None, parent)
 
         def collapse(self, hide=False):
-            """Minimize or hide window."""
+            u"""Minimize or hide window."""
             ctypes.windll.user32.ShowWindow(self.hwnd, 0 if hide else 6)  # SW_HIDE or SW_MINIMIZE
             return self
 
         def expand(self, maximize=False):
-            """Show or maximize window."""
+            u"""Show or maximize window."""
             sw = 3 if maximize else 1  # SW_MAXIMIZE or SW_NORMAL
             ctypes.windll.user32.ShowWindow(self.hwnd, sw)
             return self
 
         def dismiss(self):
-            """Close window."""
+            u"""Close window."""
             ctypes.windll.user32.PostMessageW(self.hwnd, 0x0010, 0, 0)  # WM_CLOSE
             return self
 
-        def set_title(self, title: str):
-            """Set native window title."""
+        def set_title(self, title):
+            u"""Set native window title."""
             ctypes.windll.user32.SetWindowTextW(self.hwnd, title)
             return self
 
         def get_title(self):
-            """Get native window title."""
+            u"""Get native window title."""
             cb = ctypes.windll.user32.GetWindowTextLengthW(self.hwnd) + 1
             title = ctypes.create_unicode_buffer(cb)
             ctypes.windll.user32.GetWindowTextW(self.hwnd, title, cb)
             return title
 
         def run_app(self):
-            """Run the main app message loop until window been closed."""
+            u"""Run the main app message loop until window been closed."""
             msg = MSG()
             pmsg = ctypes.pointer(msg)
             while ctypes.windll.user32.GetMessageW(pmsg, 0, 0, 0) != 0:
@@ -62,12 +63,12 @@ if SCITER_WIN:
             return int(msg.wParam)
 
         def quit_app(self, code=0):
-            """Post quit message."""
+            u"""Post quit message."""
             ctypes.windll.user32.PostQuitMessage(0)
             return self
 
         def on_message(self, hwnd, msg, wparam, lparam):
-            """Window message processing."""
+            u"""Window message processing."""
             pass
 
         def _on_msg_delegate(self, hwnd, msg, wparam, lparam, pparam, phandled):
@@ -84,16 +85,16 @@ if SCITER_WIN:
 
 elif SCITER_OSX:
 
-    class OsxWindow:
-        """Mac OS X Window (Cocoa backend)."""
+    class OsxWindow(object):
+        u"""Mac OS X Window (Cocoa backend)."""
 
         def __init__(self):
-            super().__init__()
+            super(OsxWindow, self).__init__()
             self.objc = ObjC()
             self.nsApp = None
 
-            NSApplication = self.objc.getClass('NSApplication')
-            self.nsApp = self.objc(NSApplication, 'sharedApplication')
+            NSApplication = self.objc.getClass(u'NSApplication')
+            self.nsApp = self.objc(NSApplication, u'sharedApplication')
             pass
 
         def _create(self, flags, rect, parent):
@@ -104,53 +105,53 @@ elif SCITER_OSX:
         def _window(self, hwnd=None):
             if hwnd is None:
                 hwnd = self.hwnd
-            wnd = self.objc(hwnd, 'window')
+            wnd = self.objc(hwnd, u'window')
             return wnd
 
         def collapse(self, hide=False):
-            """Minimize or hide window."""
+            u"""Minimize or hide window."""
             wnd = self._window()
             if hide:
-                self.objc(wnd, 'orderOut:', None)
+                self.objc(wnd, u'orderOut:', None)
             else:
-                self.objc(wnd, 'performMiniaturize:', self.hwnd)
+                self.objc(wnd, u'performMiniaturize:', self.hwnd)
             return self
 
         def expand(self, maximize=False):
-            """Show or maximize window."""
+            u"""Show or maximize window."""
             wnd = self._window()
             if self.window_flags & sciter.capi.scdef.SCITER_CREATE_WINDOW_FLAGS.SW_TITLEBAR:
                 # bring the main window foreground
-                self.objc(self.nsApp, 'activateIgnoringOtherApps:', True)
-            self.objc(wnd, 'makeKeyAndOrderFront:', None)
+                self.objc(self.nsApp, u'activateIgnoringOtherApps:', True)
+            self.objc(wnd, u'makeKeyAndOrderFront:', None)
             if maximize:
-                self.objc(wnd, 'performZoom:', None)
+                self.objc(wnd, u'performZoom:', None)
             return self
 
         def dismiss(self):
-            """Close window."""
-            self.objc(self._window(), 'close')
+            u"""Close window."""
+            self.objc(self._window(), u'close')
             return self
 
-        def set_title(self, title: str):
-            """Set native window title."""
-            self.objc(self._window(), 'setTitle:', self.objc.toNSString(title))
+        def set_title(self, title):
+            u"""Set native window title."""
+            self.objc(self._window(), u'setTitle:', self.objc.toNSString(title))
             return self
 
         def get_title(self):
-            """Get native window title."""
-            nstitle = self.objc(self._window(), 'title')
+            u"""Get native window title."""
+            nstitle = self.objc(self._window(), u'title')
             return self.objc.fromNSString(nstitle)
 
         def run_app(self):
-            """Run the main app message loop until window been closed."""
-            self.objc(self.nsApp, 'run')
+            u"""Run the main app message loop until window been closed."""
+            self.objc(self.nsApp, u'run')
             return 0
 
         def quit_app(self, code=0):
-            """Post quit message."""
+            u"""Post quit message."""
             if self.nsApp:
-                self.objc(self.nsApp, 'terminate:', self.nsApp)
+                self.objc(self.nsApp, u'terminate:', self.nsApp)
             return self
 
         pass
@@ -158,16 +159,16 @@ elif SCITER_OSX:
     BaseWindow = OsxWindow
 
     # objc interop
-    class ObjC():
-        """."""
+    class ObjC(object):
+        u"""."""
 
         def __init__(self):
             import ctypes.util
 
-            objc = ctypes.cdll.LoadLibrary(ctypes.util.find_library('objc'))
+            objc = ctypes.cdll.LoadLibrary(ctypes.util.find_library(u'objc'))
 
-            self.appkit = ctypes.cdll.LoadLibrary(ctypes.util.find_library('AppKit'))
-            self.cf = ctypes.cdll.LoadLibrary(ctypes.util.find_library('CoreFoundation'))
+            self.appkit = ctypes.cdll.LoadLibrary(ctypes.util.find_library(u'AppKit'))
+            self.cf = ctypes.cdll.LoadLibrary(ctypes.util.find_library(u'CoreFoundation'))
 
             # struct objc_object *id;
             # struct objc_selector *SEL;
@@ -215,33 +216,33 @@ elif SCITER_OSX:
 
         def fromNSString(self, nsString):
             if not nsString:
-                return '<nil>'
+                return u'<nil>'
 
             kCFStringEncodingUTF8 = 0x08000100
 
             n = self.cf.CFStringGetLength(nsString)
             buf = ctypes.create_string_buffer(n * 4 + 4)
             ok = self.cf.CFStringGetCString(nsString, buf, n * 4, kCFStringEncodingUTF8)
-            return buf.value.decode('utf-8') if ok else None
+            return buf.value.decode(u'utf-8') if ok else None
 
-        def toNSString(self, string: str):
+        def toNSString(self, string):
             kCFStringEncodingUTF8 = 0x08000100
-            return ctypes.c_void_p(self.cf.CFStringCreateWithCString(None, string.encode('utf8'), kCFStringEncodingUTF8))
+            return ctypes.c_void_p(self.cf.CFStringCreateWithCString(None, string.encode(u'utf8'), kCFStringEncodingUTF8))
 
         def getClass(self, name):
             # NSSound = objc.getClass('NSSound')
-            return ctypes.c_void_p(self.dll.objc_getClass(name.encode('utf-8')))
+            return ctypes.c_void_p(self.dll.objc_getClass(name.encode(u'utf-8')))
 
         def new(self, cls):
             # sound = objc.new(NSSound)
-            return self.call(self.call(cls, 'alloc'), 'init')
+            return self.call(self.call(cls, u'alloc'), u'init')
 
         def getSEL(self, name):
-            return self.dll.sel_registerName(name.encode('utf-8'))
+            return self.dll.sel_registerName(name.encode(u'utf-8'))
 
         def hasSEL(self, name, className):
-            sel = self.getSEL(name) if isinstance(name, str) else name
-            cls = self.getClass(className) if isinstance(className, str) else className
+            sel = self.getSEL(name) if isinstance(name, unicode) else name
+            cls = self.getClass(className) if isinstance(className, unicode) else className
             return self.dll.class_respondsToSelector(cls, sel)
 
         def __call__(self, obj, method, *args, **kwargs):
@@ -250,8 +251,8 @@ elif SCITER_OSX:
         def call(self, obj, method, *args, **kwargs):
             # objc.call(NSSound, 'alloc')
             objc = self.dll
-            restype = kwargs.get('cast', ctypes.c_void_p)
-            typename = kwargs.get('type')
+            restype = kwargs.get(u'cast', ctypes.c_void_p)
+            typename = kwargs.get(u'type')
             if typename is not None and hasattr(ctypes, typename):
                 restype = getattr(ctypes, typename)
             sel = self.getSEL(method)
@@ -264,11 +265,11 @@ elif SCITER_OSX:
 elif SCITER_LNX:
 
     def _init_lib():
-        if hasattr(_init_lib, '_dll'):
+        if hasattr(_init_lib, u'_dll'):
             return _init_lib._dll
 
         import ctypes.util
-        lib = ctypes.cdll.LoadLibrary(ctypes.util.find_library('gtk-3'))
+        lib = ctypes.cdll.LoadLibrary(ctypes.util.find_library(u'gtk-3'))
         _init_lib._dll = lib
 
         lib.gtk_widget_get_toplevel.restype = LPCVOID
@@ -290,11 +291,11 @@ elif SCITER_LNX:
         return lib
 
     #
-    class LinuxWindow:
-        """Linux window (GTK3 backend)."""
+    class LinuxWindow(object):
+        u"""Linux window (GTK3 backend)."""
 
         def __init__(self):
-            super().__init__()
+            super(LinuxWindow, self).__init__()
             self._gtk = _init_lib()
             pass
 
@@ -310,7 +311,7 @@ elif SCITER_LNX:
             return wnd
 
         def collapse(self, hide=False):
-            """Minimize or hide window."""
+            u"""Minimize or hide window."""
             if hide:
                 self._gtk.gtk_widget_hide(self.hwnd)
             else:
@@ -318,7 +319,7 @@ elif SCITER_LNX:
             return self
 
         def expand(self, maximize=False):
-            """Show or maximize window."""
+            u"""Show or maximize window."""
             wnd = self._window()
             if maximize:
                 self._gtk.gtk_window_maximize(wnd)
@@ -327,27 +328,27 @@ elif SCITER_LNX:
             return self
 
         def dismiss(self):
-            """Close window."""
+            u"""Close window."""
             self._gtk.gtk_window_close(self._window())
             return self
 
-        def set_title(self, title: str):
-            """Set native window title."""
-            self._gtk.gtk_window_set_title(self._window(), title.encode('utf-8'))
+        def set_title(self, title):
+            u"""Set native window title."""
+            self._gtk.gtk_window_set_title(self._window(), (title or u'').encode(u'utf-8'))
             return self
 
         def get_title(self):
-            """Get native window title."""
+            u"""Get native window title."""
             self._gtk.gtk_window_get_title.restype = ctypes.c_char_p
-            return self._gtk.gtk_window_get_title(self._window()).decode('utf-8')
+            return self._gtk.gtk_window_get_title(self._window()).decode(u'utf-8')
 
         def run_app(self):
-            """Run the main app message loop until window been closed."""
+            u"""Run the main app message loop until window been closed."""
             self._gtk.gtk_main()
             return 0
 
         def quit_app(self, code=0):
-            """Post quit message."""
+            u"""Post quit message."""
             self._gtk.gtk_main_quit()
             return self
 
