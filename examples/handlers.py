@@ -43,16 +43,16 @@ class Frame(sciter.Window):
     def test_call(self):
         # test sciter call
         v = self.call_function(u'gFunc', u"kkk", 555)
-        print u"sciter   call successfully:", v
+        print u"sciter   call successfully:", unicode(v)
 
         # test method call
         root = self.get_root()
         v = root.call_method(u'mfn', u"method call", 10300)
-        print u"method   call successfully:", v
+        print u"method   call successfully:", unicode(v)
 
         # test function call
         v = root.call_function(u'gFunc', u"function call", 10300)
-        print u"function call successfully:", v
+        print u"function call successfully:", unicode(v)
         pass
 
     # Functions called from script:
@@ -115,7 +115,7 @@ if __name__ == u"__main__":
     frame.setup_debug()
 
     # load file
-    frame.load_file(u"examples/handlers.htm")
+    frame.load_file(u"handlers.htm")
     #frame.load_html(b"""<html><body><button id='native'>Click</button></body></html>""")
 
     # install additional handler
