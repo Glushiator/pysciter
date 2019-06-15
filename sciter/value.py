@@ -153,7 +153,7 @@ class value(object):
 
         return u"<%s: %s>" % (tname, unicode(self))
 
-    def __str__(self):
+    def __unicode__(self):
         u"""Human-like value representation."""
         copy = self.copy()
         ok = _api.ValueToString(copy, VALUE_STRING_CVT_TYPE.CVT_JSON_LITERAL)
@@ -164,7 +164,7 @@ class value(object):
         # None, False, 0, "", (), [], {}
         return bool(self.get_value())
 
-    def __bytes__(self):
+    def __str__(self):
         u"""Value to bytes conversion."""
         if not self.is_bytes():
             raise TypeError(repr(self))

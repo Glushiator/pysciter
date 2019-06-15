@@ -111,17 +111,17 @@ class TestSciterValue(unittest.TestCase):
         pass
 
     def test_11bytes(self):
-        items = [None, 1, 'bye', u'hello']
+        items = [None, 1, u'hello']
         for item in items:
             with self.subTest(val=item):
                 xval = value(item)
                 with self.assertRaises(TypeError):
-                    bval = str(xval)
+                    bval = bytes(xval)
                     print bval
                 continue
         item = 'hello, world'
         xval = value(item)
-        self.assertEqual(str(xval), str(item))
+        self.assertEqual(bytes(xval), bytes(item))
         pass
 
     def test_11func(self):
