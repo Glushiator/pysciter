@@ -6,3 +6,4 @@ dist/*
 PySciter.pyproj
 PySciter.sln
 build/
+.idea/
