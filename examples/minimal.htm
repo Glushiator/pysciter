@@ -30,8 +30,13 @@
         var fn = view.selectFile(#open,
           "HTML Files (*.htm,*.html)|*.HTM;*.HTML|All Files (*.*)|*.*" , "html" );
 
-        stdout.println("selected file: " + fn);
-        $(body).$append(<h1#test>{fn}</h1>);
+        if (fn !== undefined) {
+          stdout.println("selected file: " + fn);
+          $(body).$append(<h1#test>{fn}</h1>);
+        }
+        else {
+          $(body).$append(<h1#test>Nothing.</h1>);
+        }
       });
 
     </script>

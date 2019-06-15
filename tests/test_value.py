@@ -1,6 +1,6 @@
 from __future__ import with_statement
 from __future__ import absolute_import
-import unittest
+import unittest2 as unittest
 
 import sciter
 from sciter.value import value, VALUE_TYPE
@@ -111,7 +111,7 @@ class TestSciterValue(unittest.TestCase):
         pass
 
     def test_11bytes(self):
-        items = [None, 1, u'hello']
+        items = [None, 1, 'bye', u'hello']
         for item in items:
             with self.subTest(val=item):
                 xval = value(item)
