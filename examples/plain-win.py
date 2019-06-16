@@ -129,7 +129,7 @@ def main():
     scproc = SciterHostCallback(on_sciter_callback)
     sapi.SciterSetCallback(hWnd, scproc, None)
 
-    url = u"examples/minimal.htm"
+    url = u"minimal.htm"
     sapi.SciterLoadFile(hWnd, url)
 
     windll.user32.ShowWindow(hWnd, SW_SHOW)
@@ -144,6 +144,7 @@ def main():
         windll.user32.DispatchMessageW(lpmsg)
 
     print u'Quit.'
+
 
 if __name__ == u'__main__':
     main()
