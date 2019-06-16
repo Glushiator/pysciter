@@ -12,6 +12,16 @@ from sciter.capi.sctypes import *
 import sciter.capi.sctiscript as sctiscript
 
 
+def _to_int(x):
+    """Converts a completion and error code as it is listed in 32-bit notation
+    in the VPP-4.3.2 specification to the actual integer value.
+    """
+    if x > 0x7fffffff:
+        return int(x - 0x100000000)
+    else:
+        return int(x)
+
+
 class EVENT_GROUPS(enum.IntEnum):
     u"""event groups."""
     HANDLE_INITIALIZATION = 0x0000  # attached/detached */
@@ -30,7 +40,7 @@ class EVENT_GROUPS(enum.IntEnum):
     HANDLE_EXCHANGE = 0x1000  # system drag-n-drop */
     HANDLE_GESTURE = 0x2000  # touch input events */
     HANDLE_ALL = 0xFFFF  # all of them */
-    SUBSCRIPTIONS_REQUEST = 0xFFFFFFFF  # special value for getting subscription flags */
+    SUBSCRIPTIONS_REQUEST = _to_int(0xFFFFFFFF)  # special value for getting subscription flags */
 
 
 class PHASE_MASK(enum.IntEnum):
