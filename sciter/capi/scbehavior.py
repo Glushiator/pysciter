@@ -2,7 +2,6 @@ u"""C interface for behaviors support (a.k.a windowless controls)."""
 
 from __future__ import absolute_import
 import enum
-import ctypes
 
 from sciter.capi.scdom import HELEMENT
 from sciter.capi.scvalue import SCITER_VALUE
@@ -10,17 +9,21 @@ from sciter.capi.scgraphics import HGFX
 from sciter.capi.sctypes import *
 
 import sciter.capi.sctiscript as sctiscript
+from ctypes import sizeof, c_size_t
 
 
-def _to_int(x):
-    """Converts an integer value to 32-bit notation
-       on 32-bit architecture
-    """
-    from ctypes import sizeof, c_long
-    if sizeof(c_long) == 4 and x > 0x7fffffff:
-        return int(x - 0x100000000)
-    else:
-        return int(x)
+if sizeof(c_size_t) == 4:
+    def _to_int(x):
+        """Converts an integer value to 32-bit notation
+           on 32-bit architecture
+        """
+        if x > 0x7fffffff:
+            return int(x - 0x100000000)
+        else:
+            return int(x)
+else:
+    def _to_int(x):
+        return x
 
 
 class EVENT_GROUPS(enum.IntEnum):
