@@ -3,6 +3,7 @@ u"""Download http content (Go sciter example port)."""
 from __future__ import absolute_import
 import sciter
 
+
 class ContentEventHandler(sciter.EventHandler):
     u"""<div#content> event handler."""
 
@@ -13,7 +14,9 @@ class ContentEventHandler(sciter.EventHandler):
     def on_data_arrived(self, nm):
         print u"data arrived, uri:", nm.uri, nm.dataSize, u"bytes"
         pass
+
     pass
+
 
 class Frame(sciter.Window):
     def __init__(self):
@@ -31,7 +34,11 @@ class Frame(sciter.Window):
 
     def load(self, url):
         self.set_title(u"Download Element Content")
-        self.load_html('''<html><body><p>Url to load: <span id='url'>placed here</span></p><div id='content' style='size: *'></div></body></html>''', u"/")
+        self.load_html(
+            '''<html><body>
+            <p>Url to load: <span id='url'>placed here</span></p>
+            <div id='content' style='size: *'></div></body></html>''',
+            u"/")
 
         # get root element
         root = self.get_root()
@@ -52,7 +59,9 @@ class Frame(sciter.Window):
         print u"load content"
         content.request_html(url)
         pass
+
     pass
+
 
 if __name__ == u'__main__':
     import sys
