@@ -13,10 +13,11 @@ import sciter.capi.sctiscript as sctiscript
 
 
 def _to_int(x):
-    """Converts a completion and error code as it is listed in 32-bit notation
-    in the VPP-4.3.2 specification to the actual integer value.
+    """Converts an integer value to 32-bit notation
+       on 32-bit architecture
     """
-    if x > 0x7fffffff:
+    from ctypes import sizeof, c_long
+    if sizeof(c_long) == 4 and x > 0x7fffffff:
         return int(x - 0x100000000)
     else:
         return int(x)
@@ -36,10 +37,10 @@ class EVENT_GROUPS(enum.IntEnum):
     HANDLE_BEHAVIOR_EVENT = 0x0100  # logical, synthetic events: BUTTON_CLICK, HYPERLINK_CLICK, etc., a.k.a. notifications from intrinsic behaviors */
     HANDLE_METHOD_CALL = 0x0200     # behavior specific methods */
     HANDLE_SCRIPTING_METHOD_CALL = 0x0400  # behavior specific methods */
-    HANDLE_TISCRIPT_METHOD_CALL = 0x0800   # behavior specific methods using direct tiscript::value's */
-    HANDLE_EXCHANGE = 0x1000  # system drag-n-drop */
-    HANDLE_GESTURE = 0x2000  # touch input events */
-    HANDLE_ALL = 0xFFFF  # all of them */
+    HANDLE_TISCRIPT_METHOD_CALL = 0x0800  # behavior specific methods using direct tiscript::value's */
+    HANDLE_EXCHANGE = 0x1000        # system drag-n-drop */
+    HANDLE_GESTURE = 0x2000         # touch input events */
+    HANDLE_ALL = 0xFFFF             # all of them */
     SUBSCRIPTIONS_REQUEST = _to_int(0xFFFFFFFF)  # special value for getting subscription flags */
 
 
@@ -48,7 +49,8 @@ class PHASE_MASK(enum.IntEnum):
     BUBBLING = 0
     SINKING = 0x8000
     HANDLED = 0x10000
-    SINKING_HANDLED = HANDLED|SINKING
+    SINKING_HANDLED = HANDLED | SINKING
+
 
 class MOUSE_BUTTONS(enum.IntEnum):
     u"""."""
@@ -82,18 +84,18 @@ class DRAGGING_TYPE(enum.IntEnum):
 
 class MOUSE_EVENTS(enum.IntEnum):
     (MOUSE_ENTER,
-    MOUSE_LEAVE,
-    MOUSE_MOVE,
-    MOUSE_UP,
-    MOUSE_DOWN,
-    MOUSE_DCLICK,
-    MOUSE_WHEEL,
-    MOUSE_TICK,
-    MOUSE_IDLE,
-    DROP,
-    DRAG_ENTER,
-    DRAG_LEAVE,
-    DRAG_REQUEST) = xrange(13)
+     MOUSE_LEAVE,
+     MOUSE_MOVE,
+     MOUSE_UP,
+     MOUSE_DOWN,
+     MOUSE_DCLICK,
+     MOUSE_WHEEL,
+     MOUSE_TICK,
+     MOUSE_IDLE,
+     DROP,
+     DRAG_ENTER,
+     DRAG_LEAVE,
+     DRAG_REQUEST) = xrange(13)
 
     MOUSE_CLICK = 0xFF
     DRAGGING = 0x100
@@ -101,36 +103,36 @@ class MOUSE_EVENTS(enum.IntEnum):
 
 class MOUSE_PARAMS(ctypes.Structure):
     _fields_ = [
-        (u"cmd", UINT),           # MOUSE_EVENTS
-        (u"target", HELEMENT),        # target element
-        (u"pos", POINT),           # position of cursor, element relative
-        (u"pos_view", POINT),      # position of cursor, view relative
+        (u"cmd", UINT),  # MOUSE_EVENTS
+        (u"target", HELEMENT),  # target element
+        (u"pos", POINT),  # position of cursor, element relative
+        (u"pos_view", POINT),  # position of cursor, view relative
         (u"button_state", UINT),  # MOUSE_BUTTONS
-        (u"alt_state", UINT),     # KEYBOARD_STATES
-        (u"cursor_type", UINT),   # CURSOR_TYPE to set, see CURSOR_TYPE
-        (u"is_on_icon", BOOL),    # mouse is over icon (foreground-image, foreground-repeat:no-repeat)
-        (u"dragging", HELEMENT),      # element that is being dragged over, this field is not NULL if (cmd & DRAGGING) != 0
-        (u"dragging_mode", UINT), # see DRAGGING_TYPE.
+        (u"alt_state", UINT),  # KEYBOARD_STATES
+        (u"cursor_type", UINT),  # CURSOR_TYPE to set, see CURSOR_TYPE
+        (u"is_on_icon", BOOL),  # mouse is over icon (foreground-image, foreground-repeat:no-repeat)
+        (u"dragging", HELEMENT),  # element that is being dragged over, this field is not NULL if (cmd & DRAGGING) != 0
+        (u"dragging_mode", UINT),  # see DRAGGING_TYPE.
     ]
 
 
 class CURSOR_TYPE(enum.IntEnum):
     (CURSOR_ARROW,
-    CURSOR_IBEAM,
-    CURSOR_WAIT,
-    CURSOR_CROSS,
-    CURSOR_UPARROW,
-    CURSOR_SIZENWSE,
-    CURSOR_SIZENESW,
-    CURSOR_SIZEWE,
-    CURSOR_SIZENS,
-    CURSOR_SIZEALL,
-    CURSOR_NO,
-    CURSOR_APPSTARTING,
-    CURSOR_HELP,
-    CURSOR_HAND,
-    CURSOR_DRAG_MOVE,
-    CURSOR_DRAG_COPY) = xrange(16)
+     CURSOR_IBEAM,
+     CURSOR_WAIT,
+     CURSOR_CROSS,
+     CURSOR_UPARROW,
+     CURSOR_SIZENWSE,
+     CURSOR_SIZENESW,
+     CURSOR_SIZEWE,
+     CURSOR_SIZENS,
+     CURSOR_SIZEALL,
+     CURSOR_NO,
+     CURSOR_APPSTARTING,
+     CURSOR_HELP,
+     CURSOR_HAND,
+     CURSOR_DRAG_MOVE,
+     CURSOR_DRAG_COPY) = xrange(16)
 
 
 class KEY_EVENTS(enum.IntEnum):
@@ -141,103 +143,104 @@ class KEY_EVENTS(enum.IntEnum):
 
 class KEY_PARAMS(ctypes.Structure):
     _fields_ = [
-        (u"cmd", UINT),           # KEY_EVENTS
-        (u"target", HELEMENT),        # target element
-        (u"key_code", UINT),      # key scan code, or character unicode for KEY_CHAR
-        (u"alt_state", UINT),     # KEYBOARD_STATES
+        (u"cmd", UINT),  # KEY_EVENTS
+        (u"target", HELEMENT),  # target element
+        (u"key_code", UINT),  # key scan code, or character unicode for KEY_CHAR
+        (u"alt_state", UINT),  # KEYBOARD_STATES
     ]
 
 
 class FOCUS_EVENTS(enum.IntEnum):
     FOCUS_LOST = 0  # non-bubbling event, target is new focus element
-    FOCUS_GOT = 1   # non-bubbling event, target is old focus element
-    FOCUS_IN = 2    # bubbling event/notification, target is an element that got focus
-    FOCUS_OUT = 3   # bubbling event/notification, target is an element that lost focus
+    FOCUS_GOT = 1  # non-bubbling event, target is old focus element
+    FOCUS_IN = 2  # bubbling event/notification, target is an element that got focus
+    FOCUS_OUT = 3  # bubbling event/notification, target is an element that lost focus
 
 
 class FOCUS_PARAMS(ctypes.Structure):
     _fields_ = [
-        (u"cmd", UINT),           # FOCUS_EVENTS
-        (u"target", HELEMENT),        # target element, for FOCUS_LOST it is a handle of new focus element
-                                 #    and for FOCUS_GOT it is a handle of old focus element, can be NULL
+        (u"cmd", UINT),  # FOCUS_EVENTS
+        (u"target", HELEMENT),  # target element, for FOCUS_LOST it is a handle of new focus element
+        #    and for FOCUS_GOT it is a handle of old focus element, can be NULL
         (u"by_mouse_click", BOOL),  # true if focus is being set by mouse click
-        (u"cancel", BOOL),          # in FOCUS_LOST phase setting this field to true will cancel transfer focus from old element to the new one.
+        (u"cancel", BOOL),
+        # in FOCUS_LOST phase setting this field to true will cancel transfer focus from old element to the new one.
     ]
 
 
 class SCROLL_EVENTS(enum.IntEnum):
     (SCROLL_HOME,
-    SCROLL_END,
-    SCROLL_STEP_PLUS,
-    SCROLL_STEP_MINUS,
-    SCROLL_PAGE_PLUS,
-    SCROLL_PAGE_MINUS,
-    SCROLL_POS,
-    SCROLL_SLIDER_RELEASED,
-    SCROLL_CORNER_PRESSED,
-    SCROLL_CORNER_RELEASED,
-    SCROLL_SLIDER_PRESSED) = xrange(11)
+     SCROLL_END,
+     SCROLL_STEP_PLUS,
+     SCROLL_STEP_MINUS,
+     SCROLL_PAGE_PLUS,
+     SCROLL_PAGE_MINUS,
+     SCROLL_POS,
+     SCROLL_SLIDER_RELEASED,
+     SCROLL_CORNER_PRESSED,
+     SCROLL_CORNER_RELEASED,
+     SCROLL_SLIDER_PRESSED) = xrange(11)
 
 
 class SCROLL_SOURCE(enum.IntEnum):
     (SCROLL_SOURCE_UNKNOWN,
-    SCROLL_SOURCE_KEYBOARD,     # `SCROLL_PARAMS::reason` contains a key code
-    SCROLL_SOURCE_SCROLLBAR,    # `SCROLL_PARAMS::reason` contains a `SCROLLBAR_PART` enum
-    SCROLL_SOURCE_ANIMATOR,
-    ) = xrange(4)
+     SCROLL_SOURCE_KEYBOARD,  # `SCROLL_PARAMS::reason` contains a key code
+     SCROLL_SOURCE_SCROLLBAR,  # `SCROLL_PARAMS::reason` contains a `SCROLLBAR_PART` enum
+     SCROLL_SOURCE_ANIMATOR,
+     ) = xrange(4)
 
 
 class SCROLL_PARAMS(ctypes.Structure):
     _fields_ = [
-        (u"cmd", UINT),          # SCROLL_EVENTS
-        (u"target", HELEMENT),   # target element
-        (u"pos", INT),           # scroll position if SCROLL_POS
-        (u"vertical", BOOL),     # true if from vertical scrollbar
-        (u"source", UINT),       # SCROLL_SOURCE
-        (u"reason", UINT),       # SCROLLBAR_PART or key code, see SCROLL_SOURCE
+        (u"cmd", UINT),  # SCROLL_EVENTS
+        (u"target", HELEMENT),  # target element
+        (u"pos", INT),  # scroll position if SCROLL_POS
+        (u"vertical", BOOL),  # true if from vertical scrollbar
+        (u"source", UINT),  # SCROLL_SOURCE
+        (u"reason", UINT),  # SCROLLBAR_PART or key code, see SCROLL_SOURCE
     ]
 
 
 class GESTURE_CMD(enum.IntEnum):
     (GESTURE_REQUEST,  # return true and fill flags if it will handle gestures.
-    GESTURE_ZOOM,         # The zoom gesture.
-    GESTURE_PAN,          # The pan gesture.
-    GESTURE_ROTATE,       # The rotation gesture.
-    GESTURE_TAP1,         # The tap gesture.
-    GESTURE_TAP2) = xrange(6)   # The two-finger tap gesture.
+     GESTURE_ZOOM,  # The zoom gesture.
+     GESTURE_PAN,  # The pan gesture.
+     GESTURE_ROTATE,  # The rotation gesture.
+     GESTURE_TAP1,  # The tap gesture.
+     GESTURE_TAP2) = xrange(6)  # The two-finger tap gesture.
 
 
 class GESTURE_STATE(enum.IntEnum):
-    GESTURE_STATE_BEGIN = 1     # starts
-    GESTURE_STATE_INERTIA = 2   # events generated by inertia processor
-    GESTURE_STATE_END = 4       # end, last event of the gesture sequence
+    GESTURE_STATE_BEGIN = 1  # starts
+    GESTURE_STATE_INERTIA = 2  # events generated by inertia processor
+    GESTURE_STATE_END = 4  # end, last event of the gesture sequence
 
 
 class GESTURE_TYPE_FLAGS(enum.IntEnum):
-    GESTURE_FLAG_ZOOM               = 0x0001
-    GESTURE_FLAG_ROTATE             = 0x0002
-    GESTURE_FLAG_PAN_VERTICAL       = 0x0004
-    GESTURE_FLAG_PAN_HORIZONTAL     = 0x0008
-    GESTURE_FLAG_TAP1               = 0x0010   # press & tap
-    GESTURE_FLAG_TAP2               = 0x0020   # two fingers tap
+    GESTURE_FLAG_ZOOM = 0x0001
+    GESTURE_FLAG_ROTATE = 0x0002
+    GESTURE_FLAG_PAN_VERTICAL = 0x0004
+    GESTURE_FLAG_PAN_HORIZONTAL = 0x0008
+    GESTURE_FLAG_TAP1 = 0x0010  # press & tap
+    GESTURE_FLAG_TAP2 = 0x0020  # two fingers tap
 
-    GESTURE_FLAG_PAN_WITH_GUTTER    = 0x4000   # PAN_VERTICAL and PAN_HORIZONTAL modifiers
-    GESTURE_FLAG_PAN_WITH_INERTIA   = 0x8000   #
-    GESTURE_FLAGS_ALL               = 0xFFFF   #
+    GESTURE_FLAG_PAN_WITH_GUTTER = 0x4000  # PAN_VERTICAL and PAN_HORIZONTAL modifiers
+    GESTURE_FLAG_PAN_WITH_INERTIA = 0x8000  #
+    GESTURE_FLAGS_ALL = 0xFFFF  #
 
 
 class GESTURE_PARAMS(ctypes.Structure):
     _fields_ = [
-        (u"cmd", UINT),           # GESTURE_EVENTS
-        (u"target", HELEMENT),        # target element
-        (u"pos", POINT),           # position of cursor, element relative
-        (u"pos_view", POINT),      # position of cursor, view relative
-        (u"flags", UINT),         # for GESTURE_REQUEST combination of GESTURE_FLAGs.
-                             # for others it is a combination of GESTURE_STATe's
-        (u"delta_time", UINT),    # period of time from previous event.
-        (u"delta_xy", SIZE),      # for GESTURE_PAN it is a direction vector
-        (u"delta_v", c_double),       # for GESTURE_ROTATE - delta angle (radians)
-                             # for GESTURE_ZOOM - zoom value, is less or greater than 1.0
+        (u"cmd", UINT),  # GESTURE_EVENTS
+        (u"target", HELEMENT),  # target element
+        (u"pos", POINT),  # position of cursor, element relative
+        (u"pos_view", POINT),  # position of cursor, view relative
+        (u"flags", UINT),  # for GESTURE_REQUEST combination of GESTURE_FLAGs.
+        # for others it is a combination of GESTURE_STATe's
+        (u"delta_time", UINT),  # period of time from previous event.
+        (u"delta_xy", SIZE),  # for GESTURE_PAN it is a direction vector
+        (u"delta_v", c_double),  # for GESTURE_ROTATE - delta angle (radians)
+        # for GESTURE_ZOOM - zoom value, is less or greater than 1.0
     ]
 
 
@@ -250,11 +253,11 @@ class DRAW_EVENTS(enum.IntEnum):
 
 class DRAW_PARAMS(ctypes.Structure):
     _fields_ = [
-        (u"cmd", UINT),        # DRAW_EVENTS
-        (u"gfx", HGFX),        # hdc to paint on
-        (u"area", RECT),       # element area, to get invalid area to paint use GetClipBox,
-        (u"reserved", UINT),   # for DRAW_BACKGROUND/DRAW_FOREGROUND - it is a border box
-    ]                         # for DRAW_CONTENT - it is a content box
+        (u"cmd", UINT),  # DRAW_EVENTS
+        (u"gfx", HGFX),  # hdc to paint on
+        (u"area", RECT),  # element area, to get invalid area to paint use GetClipBox,
+        (u"reserved", UINT),  # for DRAW_BACKGROUND/DRAW_FOREGROUND - it is a border box
+    ]  # for DRAW_CONTENT - it is a content box
 
 
 class CONTENT_CHANGE_BITS(enum.IntEnum):
@@ -264,105 +267,105 @@ class CONTENT_CHANGE_BITS(enum.IntEnum):
 
 class BEHAVIOR_EVENTS(enum.IntEnum):
     u"""Behavior event code."""
-    BUTTON_CLICK = 0               # click on button
-    BUTTON_PRESS = 1               # mouse down or key down in button
-    BUTTON_STATE_CHANGED = 2       # checkbox/radio/slider changed its state/value
-    EDIT_VALUE_CHANGING = 3        # before text change
-    EDIT_VALUE_CHANGED = 4         # after text change
-    SELECT_SELECTION_CHANGED = 5   # selection in <select> changed
-    SELECT_STATE_CHANGED = 6       # node in select expanded/collapsed, heTarget is the node
+    BUTTON_CLICK = 0  # click on button
+    BUTTON_PRESS = 1  # mouse down or key down in button
+    BUTTON_STATE_CHANGED = 2  # checkbox/radio/slider changed its state/value
+    EDIT_VALUE_CHANGING = 3  # before text change
+    EDIT_VALUE_CHANGED = 4  # after text change
+    SELECT_SELECTION_CHANGED = 5  # selection in <select> changed
+    SELECT_STATE_CHANGED = 6  # node in select expanded/collapsed, heTarget is the node
 
-    POPUP_REQUEST   = 7            # request to show popup just received,
-                                  #     here DOM of popup element can be modifed.
-    POPUP_READY     = 8            # popup element has been measured and ready to be shown on screen,
-                                  #     here you can use functions like ScrollToView.
-    POPUP_DISMISSED = 9            # popup element is closed,
-                                  #     here DOM of popup element can be modifed again - e.g. some items can be removed
-                                  #     to free memory.
+    POPUP_REQUEST = 7  # request to show popup just received,
+    #     here DOM of popup element can be modifed.
+    POPUP_READY = 8  # popup element has been measured and ready to be shown on screen,
+    #     here you can use functions like ScrollToView.
+    POPUP_DISMISSED = 9  # popup element is closed,
+    #     here DOM of popup element can be modifed again - e.g. some items can be removed
+    #     to free memory.
 
-    MENU_ITEM_ACTIVE = 0xA         # menu item activated by mouse hover or by keyboard,
-    MENU_ITEM_CLICK = 0xB          # menu item click,
-                                  #   BEHAVIOR_EVENT_PARAMS structure layout
-                                  #   BEHAVIOR_EVENT_PARAMS.cmd - MENU_ITEM_CLICK/MENU_ITEM_ACTIVE
-                                  #   BEHAVIOR_EVENT_PARAMS.heTarget - owner(anchor) of the menu
-                                  #   BEHAVIOR_EVENT_PARAMS.he - the menu item, presumably <li> element
-                                  #   BEHAVIOR_EVENT_PARAMS.reason - BY_MOUSE_CLICK | BY_KEY_CLICK
+    MENU_ITEM_ACTIVE = 0xA  # menu item activated by mouse hover or by keyboard,
+    MENU_ITEM_CLICK = 0xB  # menu item click,
+    #   BEHAVIOR_EVENT_PARAMS structure layout
+    #   BEHAVIOR_EVENT_PARAMS.cmd - MENU_ITEM_CLICK/MENU_ITEM_ACTIVE
+    #   BEHAVIOR_EVENT_PARAMS.heTarget - owner(anchor) of the menu
+    #   BEHAVIOR_EVENT_PARAMS.he - the menu item, presumably <li> element
+    #   BEHAVIOR_EVENT_PARAMS.reason - BY_MOUSE_CLICK | BY_KEY_CLICK
 
-    CONTEXT_MENU_REQUEST = 0x10    # "right-click", BEHAVIOR_EVENT_PARAMS::he is current popup menu HELEMENT being processed or NULL.
-                                  # application can provide its own HELEMENT here (if it is NULL) or modify current menu element.
+    CONTEXT_MENU_REQUEST = 0x10  # "right-click", BEHAVIOR_EVENT_PARAMS::he is current popup menu HELEMENT being processed or NULL.
+    # application can provide its own HELEMENT here (if it is NULL) or modify current menu element.
 
     VISIUAL_STATUS_CHANGED = 0x11  # broadcast notification, sent to all elements of some container being shown or hidden
-    DISABLED_STATUS_CHANGED = 0x12 # broadcast notification, sent to all elements of some container that got new value of :disabled state
+    DISABLED_STATUS_CHANGED = 0x12  # broadcast notification, sent to all elements of some container that got new value of :disabled state
 
-    POPUP_DISMISSING = 0x13        # popup is about to be closed
+    POPUP_DISMISSING = 0x13  # popup is about to be closed
 
-    CONTENT_CHANGED = 0x15         # content has been changed, is posted to the element that gets content changed,  reason is combination of CONTENT_CHANGE_BITS.
-                                  # target == NULL means the window got new document and this event is dispatched only to the window.
+    CONTENT_CHANGED = 0x15  # content has been changed, is posted to the element that gets content changed,  reason is combination of CONTENT_CHANGE_BITS.
+    # target == NULL means the window got new document and this event is dispatched only to the window.
 
-    CLICK = 0x16                   # generic click
-    CHANGE = 0x17                  # generic change
+    CLICK = 0x16  # generic click
+    CHANGE = 0x17  # generic change
 
     # "grey" event codes  - notfications from behaviors from this SDK
-    HYPERLINK_CLICK = 0x80         # hyperlink click
+    HYPERLINK_CLICK = 0x80  # hyperlink click
 
-    ELEMENT_COLLAPSED = 0x90       # element was collapsed, so far only behavior:tabs is sending these two to the panels
-    ELEMENT_EXPANDED = 0x91        # element was expanded,
+    ELEMENT_COLLAPSED = 0x90  # element was collapsed, so far only behavior:tabs is sending these two to the panels
+    ELEMENT_EXPANDED = 0x91  # element was expanded,
 
-    ACTIVATE_CHILD = 0x92          # activate (select) child,
-                                 # used for example by accesskeys behaviors to send activation request, e.g. tab on behavior:tabs.
+    ACTIVATE_CHILD = 0x92  # activate (select) child,
+    # used for example by accesskeys behaviors to send activation request, e.g. tab on behavior:tabs.
 
-    INIT_DATA_VIEW = 0x93          # request to virtual grid to initialize its view
+    INIT_DATA_VIEW = 0x93  # request to virtual grid to initialize its view
 
-    ROWS_DATA_REQUEST = 0x94       # request from virtual grid to data source behavior to fill data in the table
-                                 # parameters passed throug DATA_ROWS_PARAMS structure.
+    ROWS_DATA_REQUEST = 0x94  # request from virtual grid to data source behavior to fill data in the table
+    # parameters passed throug DATA_ROWS_PARAMS structure.
 
-    UI_STATE_CHANGED = 0x95        # ui state changed, observers shall update their visual states.
-                                 # is sent for example by behavior:richtext when caret position/selection has changed.
+    UI_STATE_CHANGED = 0x95  # ui state changed, observers shall update their visual states.
+    # is sent for example by behavior:richtext when caret position/selection has changed.
 
-    FORM_SUBMIT = 0x96             # behavior:form detected submission event. BEHAVIOR_EVENT_PARAMS::data field contains data to be posted.
-                                 # BEHAVIOR_EVENT_PARAMS::data is of type T_MAP in this case key/value pairs of data that is about
-                                 # to be submitted. You can modify the data or discard submission by returning true from the handler.
-    FORM_RESET = 0x97              # behavior:form detected reset event (from button type=reset). BEHAVIOR_EVENT_PARAMS::data field contains data to be reset.
-                                 # BEHAVIOR_EVENT_PARAMS::data is of type T_MAP in this case key/value pairs of data that is about
-                                 # to be rest. You can modify the data or discard reset by returning true from the handler.
+    FORM_SUBMIT = 0x96  # behavior:form detected submission event. BEHAVIOR_EVENT_PARAMS::data field contains data to be posted.
+    # BEHAVIOR_EVENT_PARAMS::data is of type T_MAP in this case key/value pairs of data that is about
+    # to be submitted. You can modify the data or discard submission by returning true from the handler.
+    FORM_RESET = 0x97  # behavior:form detected reset event (from button type=reset). BEHAVIOR_EVENT_PARAMS::data field contains data to be reset.
+    # BEHAVIOR_EVENT_PARAMS::data is of type T_MAP in this case key/value pairs of data that is about
+    # to be rest. You can modify the data or discard reset by returning true from the handler.
 
-    DOCUMENT_COMPLETE = 0x98       # document in behavior:frame or root document is complete.
+    DOCUMENT_COMPLETE = 0x98  # document in behavior:frame or root document is complete.
 
-    HISTORY_PUSH = 0x99            # requests to behavior:history (commands)
+    HISTORY_PUSH = 0x99  # requests to behavior:history (commands)
     HISTORY_DROP = 0x9A
     HISTORY_PRIOR = 0x9B
     HISTORY_NEXT = 0x9C
-    HISTORY_STATE_CHANGED = 0x9D   # behavior:history notification - history stack has changed
+    HISTORY_STATE_CHANGED = 0x9D  # behavior:history notification - history stack has changed
 
-    CLOSE_POPUP = 0x9E             # close popup request,
-    REQUEST_TOOLTIP = 0x9F         # request tooltip, evt.source <- is the tooltip element.
+    CLOSE_POPUP = 0x9E  # close popup request,
+    REQUEST_TOOLTIP = 0x9F  # request tooltip, evt.source <- is the tooltip element.
 
-    ANIMATION         = 0xA0       # animation started (reason=1) or ended(reason=0) on the element.
+    ANIMATION = 0xA0  # animation started (reason=1) or ended(reason=0) on the element.
 
-    DOCUMENT_CREATED  = 0xC0       # document created, script namespace initialized. target -> the document
+    DOCUMENT_CREATED = 0xC0  # document created, script namespace initialized. target -> the document
     DOCUMENT_CLOSE_REQUEST = 0xC1  # document is about to be closed, to cancel closing do: evt.data = sciter::value("cancel");
-    DOCUMENT_CLOSE    = 0xC2       # last notification before document removal from the DOM
-    DOCUMENT_READY    = 0xC3       # document has got DOM structure, styles and behaviors of DOM elements. Script loading run is complete at this moment.
-    DOCUMENT_PARSED   = 0xC4       # document just finished parsing - has got DOM structure. This event is generated before the `DOCUMENT_READY`. Since 4.0.3.
+    DOCUMENT_CLOSE = 0xC2  # last notification before document removal from the DOM
+    DOCUMENT_READY = 0xC3  # document has got DOM structure, styles and behaviors of DOM elements. Script loading run is complete at this moment.
+    DOCUMENT_PARSED = 0xC4  # document just finished parsing - has got DOM structure. This event is generated before the `DOCUMENT_READY`. Since 4.0.3.
 
-    VIDEO_INITIALIZED = 0xD1       # <video> "ready" notification
-    VIDEO_STARTED     = 0xD2       # <video> playback started notification
-    VIDEO_STOPPED     = 0xD3       # <video> playback stoped/paused notification
-    VIDEO_BIND_RQ     = 0xD4       # <video> request for frame source binding,
-                                 #   If you want to provide your own video frames source for the given target <video> element do the following:
-                                 #   1. Handle and consume this VIDEO_BIND_RQ request
-                                 #   2. You will receive second VIDEO_BIND_RQ request/event for the same <video> element
-                                 #      but this time with the 'reason' field set to an instance of sciter::video_destination interface.
-                                 #   3. add_ref() it and store it for example in worker thread producing video frames.
-                                 #   4. call sciter::video_destination::start_streaming(...) providing needed parameters
-                                 #      call sciter::video_destination::render_frame(...) as soon as they are available
-                                 #      call sciter::video_destination::stop_streaming() to stop the rendering (a.k.a. end of movie reached)
+    VIDEO_INITIALIZED = 0xD1  # <video> "ready" notification
+    VIDEO_STARTED = 0xD2  # <video> playback started notification
+    VIDEO_STOPPED = 0xD3  # <video> playback stoped/paused notification
+    VIDEO_BIND_RQ = 0xD4  # <video> request for frame source binding,
+    #   If you want to provide your own video frames source for the given target <video> element do the following:
+    #   1. Handle and consume this VIDEO_BIND_RQ request
+    #   2. You will receive second VIDEO_BIND_RQ request/event for the same <video> element
+    #      but this time with the 'reason' field set to an instance of sciter::video_destination interface.
+    #   3. add_ref() it and store it for example in worker thread producing video frames.
+    #   4. call sciter::video_destination::start_streaming(...) providing needed parameters
+    #      call sciter::video_destination::render_frame(...) as soon as they are available
+    #      call sciter::video_destination::stop_streaming() to stop the rendering (a.k.a. end of movie reached)
 
-    PAGINATION_STARTS  = 0xE0      # behavior:pager starts pagination
-    PAGINATION_PAGE    = 0xE1      # behavior:pager paginated page no, reason -> page no
-    PAGINATION_ENDS    = 0xE2      # behavior:pager end pagination, reason -> total pages
+    PAGINATION_STARTS = 0xE0  # behavior:pager starts pagination
+    PAGINATION_PAGE = 0xE1  # behavior:pager paginated page no, reason -> page no
+    PAGINATION_ENDS = 0xE2  # behavior:pager end pagination, reason -> total pages
 
-    CUSTOM             = 0xF0      # event with custom name, since 4.2.8.0
+    CUSTOM = 0xF0  # event with custom name, since 4.2.8.0
 
     FIRST_APPLICATION_EVENT_CODE = 0x100
     # all custom event codes shall be greater
@@ -381,30 +384,33 @@ class CLICK_REASON(enum.IntEnum):
 
 
 class EDIT_CHANGED_REASON(enum.IntEnum):
-    BY_INS_CHAR = 0   # single char insertion
+    BY_INS_CHAR = 0  # single char insertion
     BY_INS_CHARS = 1  # character range insertion, clipboard
-    BY_DEL_CHAR = 2   # single char deletion
+    BY_DEL_CHAR = 2  # single char deletion
     BY_DEL_CHARS = 3  # character range deletion (selection)
     BY_UNDO_REDO = 4  # undo/redo
 
 
 class BEHAVIOR_EVENT_PARAMS(ctypes.Structure):
     _fields_ = [
-        (u"cmd", UINT),              # BEHAVIOR_EVENTS
-        (u"heTarget", HELEMENT),     # target element handler, in MENU_ITEM_CLICK this is owner element that caused this menu - e.g. context menu owner
-                                    # In scripting this field named as Event.owner
-        (u"he", HELEMENT),           # source element e.g. in SELECTION_CHANGED it is new selected <option>, in MENU_ITEM_CLICK it is menu item (LI) element
-        (u"reason", UINT_PTR),       # CLICK_REASON or EDIT_CHANGED_REASON - UI action causing change.
-                                    # In case of custom event notifications this may be any
-                                    # application specific value.
-        (u"data", SCITER_VALUE),     # auxiliary data accompanied with the event. E.g. FORM_SUBMIT event is using this field to pass collection of values.
-        (u"name", LPCWSTR),          # name of a custom event (when `cmd` is `CUSTOM`), since 4.2.8.0
+        (u"cmd", UINT),  # BEHAVIOR_EVENTS
+        (u"heTarget", HELEMENT),
+        # target element handler, in MENU_ITEM_CLICK this is owner element that caused this menu - e.g. context menu owner
+        # In scripting this field named as Event.owner
+        (u"he", HELEMENT),
+        # source element e.g. in SELECTION_CHANGED it is new selected <option>, in MENU_ITEM_CLICK it is menu item (LI) element
+        (u"reason", UINT_PTR),  # CLICK_REASON or EDIT_CHANGED_REASON - UI action causing change.
+        # In case of custom event notifications this may be any
+        # application specific value.
+        (u"data", SCITER_VALUE),
+        # auxiliary data accompanied with the event. E.g. FORM_SUBMIT event is using this field to pass collection of values.
+        (u"name", LPCWSTR),  # name of a custom event (when `cmd` is `CUSTOM`), since 4.2.8.0
     ]
 
 
 class TIMER_PARAMS(ctypes.Structure):
     _fields_ = [
-        (u"timerId", UINT_PTR),     # timerId that was used to create timer by using HTMLayoutSetTimerEx
+        (u"timerId", UINT_PTR),  # timerId that was used to create timer by using HTMLayoutSetTimerEx
     ]
 
 
@@ -422,23 +428,23 @@ class BEHAVIOR_METHOD_IDENTIFIERS(enum.IntEnum):
     SCROLL_BAR_SET_VALUE = 7
 
     TEXT_EDIT_GET_CARET_POSITION = 8
-    TEXT_EDIT_GET_SELECTION_TEXT = 9    # p - TEXT_SELECTION_PARAMS
-    TEXT_EDIT_GET_SELECTION_HTML = 10   # p - TEXT_SELECTION_PARAMS
-    TEXT_EDIT_CHAR_POS_AT_XY = 11       # p - TEXT_EDIT_CHAR_POS_AT_XY_PARAMS
+    TEXT_EDIT_GET_SELECTION_TEXT = 9  # p - TEXT_SELECTION_PARAMS
+    TEXT_EDIT_GET_SELECTION_HTML = 10  # p - TEXT_SELECTION_PARAMS
+    TEXT_EDIT_CHAR_POS_AT_XY = 11  # p - TEXT_EDIT_CHAR_POS_AT_XY_PARAMS
 
-    IS_EMPTY      = 0xFC        # p - IS_EMPTY_PARAMS  # set VALUE_PARAMS::is_empty (false/true) reflects :empty state of the element.
-    GET_VALUE     = 0xFD        # p - VALUE_PARAMS
-    SET_VALUE     = 0xFE        # p - VALUE_PARAMS
+    IS_EMPTY = 0xFC  # p - IS_EMPTY_PARAMS  # set VALUE_PARAMS::is_empty (false/true) reflects :empty state of the element.
+    GET_VALUE = 0xFD  # p - VALUE_PARAMS
+    SET_VALUE = 0xFE  # p - VALUE_PARAMS
 
     FIRST_APPLICATION_METHOD_ID = 0x100
 
 
 class SCRIPTING_METHOD_PARAMS(ctypes.Structure):
     _fields_ = [
-        (u"name", LPCSTR),                   # method name
-        (u"argv", POINTER(SCITER_VALUE)),    # vector of arguments
-        (u"argc", UINT),                     # argument count
-        (u"result", SCITER_VALUE),           # return value
+        (u"name", LPCSTR),  # method name
+        (u"argv", POINTER(SCITER_VALUE)),  # vector of arguments
+        (u"argc", UINT),  # argument count
+        (u"result", SCITER_VALUE),  # return value
     ]
 
 
@@ -446,7 +452,7 @@ class TISCRIPT_METHOD_PARAMS(ctypes.Structure):
     _fields_ = [
         # parameters are accessible through tiscript::args.
         (u"vm", sctiscript.HVM),
-        (u"tag", sctiscript.value),     # method id (symbol)
+        (u"tag", sctiscript.value),  # method id (symbol)
         (u"result", sctiscript.value),  # return value
     ]
 
@@ -471,13 +477,12 @@ class IS_EMPTY_PARAMS(ctypes.Structure):
 class DATA_ARRIVED_PARAMS(ctypes.Structure):
     _fields_ = [
         (u"initiator", HELEMENT),  # element intiator of HTMLayoutRequestElementData request,
-        (u"data", LPCBYTE),       # data buffer
-        (u"dataSize", UINT),      # size of data
-        (u"dataType", UINT),      # data type passed "as is" from HTMLayoutRequestElementData
-        (u"status", UINT),        # status = 0 (dataSize == 0) - unknown error.
-                                 # status = 100..505 - http response status, Note: 200 - OK!
-                                 # status > 12000 - wininet error code, see ERROR_INTERNET_*** in wininet.h
-        (u"_uri", LPCWSTR),       # requested url
+        (u"data", LPCBYTE),  # data buffer
+        (u"dataSize", UINT),  # size of data
+        (u"dataType", UINT),  # data type passed "as is" from HTMLayoutRequestElementData
+        (u"status", UINT),  # status = 0 (dataSize == 0) - unknown error.
+        # status = 100..505 - http response status, Note: 200 - OK!
+        # status > 12000 - wininet error code, see ERROR_INTERNET_*** in wininet.h
+        (u"_uri", LPCWSTR),  # requested url
     ]
     uri = UTF16LEField(u'_uri')
-
