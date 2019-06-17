@@ -458,8 +458,10 @@ class ISciterAPI(Structure):
     _fields_ = _make_fields(sciter_api)
 # end
 
+
 SCITER_LOAD_ERROR = u"""%s%s was not found in PATH.
-  Please verify that Sciter SDK is installed and its binaries (SDK/bin, bin.osx or bin.gtk) are available in the path.""" % (SCITER_DLL_NAME, SCITER_DLL_EXT)
+  Please verify that Sciter SDK is installed and its binaries
+  (SDK/bin, bin.osx or bin.gtk) are available in the path.""" % (SCITER_DLL_NAME, SCITER_DLL_EXT)
 
 
 def SciterAPI():
@@ -478,14 +480,14 @@ def SciterAPI():
         try:
             scdll = ctypes.WinDLL(SCITER_DLL_NAME)
         except OSError, e:
-            errors.append(u"'%s': %s" % (SCITER_DLL_NAME, unicode(e)))
+            errors.append(u"'%s': %s" % (SCITER_DLL_NAME, e.message.decode("mbcs")))
 
             # try to find 3.x version
+            dllname = u"sciter64" if sys.maxsize > 2 ** 32 else u"sciter32"
             try:
-                dllname = u"sciter64" if sys.maxsize > 2**32 else u"sciter32"
                 scdll = ctypes.WinDLL(dllname)
             except OSError, e:
-                errors.append(u"'%s': %s" % (dllname, unicode(e)))
+                errors.append(u"'%s': %s" % (dllname, e.message.decode("mbcs")))
 
     else:
         # same behavior for OSX & Linux
