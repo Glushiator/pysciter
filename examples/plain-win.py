@@ -10,6 +10,8 @@ from sciter.capi.scdef import *
 from ctypes import *
 from ctypes.wintypes import *
 
+import os
+
 # defs
 WS_EX_APPWINDOW = 0x40000
 WS_OVERLAPPEDWINDOW = 0xcf0000
@@ -93,11 +95,17 @@ def on_wnd_message(hWnd, Msg, wParam, lParam):
     return 0
 
 
+def to_url(filename):
+    return u"file://" + os.path.abspath(filename).replace(u"\\", u"/")
+
+
 def main():
     clsname = sapi.SciterClassName()
     sciter.runtime_features(allow_sysinfo=True)
 
-    title = u"Win32 Sciter"
+    print u"Sciter version: %s.%s.%s.%s" % sciter.version()
+
+    title = u"Plain Win32 Sciter"
     clsname = u"PySciter"
 
     WndProc = WNDPROCTYPE(on_wnd_message)
@@ -120,7 +128,8 @@ def main():
         print u'Failed to register window: ', err
         exit(0)
 
-    hWnd = windll.user32.CreateWindowExW(0, clsname, title, WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, 800, 600, 0, 0, 0, 0)
+    hWnd = windll.user32.CreateWindowExW(0, clsname, title, WS_OVERLAPPEDWINDOW,
+                                         CW_USEDEFAULT, CW_USEDEFAULT, 800, 600, 0, 0, 0, 0)
     if not hWnd:
         err = windll.kernel32.GetLastError()
         print u'Failed to create window: ', err
@@ -129,8 +138,8 @@ def main():
     scproc = SciterHostCallback(on_sciter_callback)
     sapi.SciterSetCallback(hWnd, scproc, None)
 
-    url = u"minimal.htm"
-    sapi.SciterLoadFile(hWnd, url)
+    filename = u"minimal.htm"
+    sapi.SciterLoadFile(hWnd, to_url(filename))
 
     windll.user32.ShowWindow(hWnd, SW_SHOW)
     windll.user32.UpdateWindow(hWnd)
