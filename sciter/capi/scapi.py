@@ -464,6 +464,16 @@ SCITER_LOAD_ERROR = u"""%s%s was not found in PATH.
   (SDK/bin, bin.osx or bin.gtk) are available in the path.""" % (SCITER_DLL_NAME, SCITER_DLL_EXT)
 
 
+if SCITER_WIN:
+    _PLATFORM_8BIT_ENCODING = "mbcs"
+else:
+    _PLATFORM_8BIT_ENCODING = sys.getdefaultencoding()
+
+
+def decode_8bit_string(s):
+    return s.decode(_PLATFORM_8BIT_ENCODING)
+
+
 def SciterAPI():
     u"""Bind Sciter API."""
     if hasattr(SciterAPI, u"_api"):
@@ -480,14 +490,14 @@ def SciterAPI():
         try:
             scdll = ctypes.WinDLL(SCITER_DLL_NAME)
         except OSError, e:
-            errors.append(u"'%s': %s" % (SCITER_DLL_NAME, e.message.decode("mbcs")))
+            errors.append(u"'%s': %s" % (SCITER_DLL_NAME, decode_8bit_string(e.message)))
 
             # try to find 3.x version
             dllname = u"sciter64" if sys.maxsize > 2 ** 32 else u"sciter32"
             try:
                 scdll = ctypes.WinDLL(dllname)
             except OSError, e:
-                errors.append(u"'%s': %s" % (dllname, e.message.decode("mbcs")))
+                errors.append(u"'%s': %s" % (dllname, decode_8bit_string(e.message)))
 
     else:
         # same behavior for OSX & Linux

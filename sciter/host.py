@@ -105,6 +105,7 @@ class Host(object):
         u"""Load HTML document from file."""
         if normalize and u"://" not in uri:
             uri = u"file://" + os.path.abspath(uri).replace(u"\\", u"/")
+        print "load_file: uri:", uri, normalize
         ok = _api.SciterLoadFile(self.hwnd, uri)
         if not ok:
             raise sciter.SciterError(u"Unable to load file " + uri)
